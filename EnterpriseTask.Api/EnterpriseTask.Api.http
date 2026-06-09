@@ -5,6 +5,7 @@
 @companyAdminPassword = {{$processEnv COMPANY_ADMIN_PASSWORD}}
 @systemAdminToken = paste-system-admin-token-here
 @companyAdminToken = paste-company-admin-token-here
+@subscriptionPlanId = 1
 
 ### Register company and CompanyAdmin
 POST {{host}}/api/auth/register-company
@@ -53,4 +54,24 @@ Content-Type: application/json
 {
   "currentPassword": "{{companyAdminPassword}}",
   "newPassword": "{{$processEnv COMPANY_ADMIN_NEW_PASSWORD}}"
+}
+
+### Public subscription plans for company onboarding
+GET {{host}}/api/company-onboarding/subscription-plans
+
+### Simulated subscription purchase and CompanyAdmin onboarding
+POST {{host}}/api/company-onboarding/purchase
+Content-Type: application/json
+
+{
+  "subscriptionPlanId": {{subscriptionPlanId}},
+  "companyName": "Công ty Demo ABC",
+  "taxCode": "0312345678",
+  "companyEmail": "contact@demoabc.com",
+  "companyPhone": "0909000000",
+  "companyAddress": "Bình Dương",
+  "industry": "Công nghệ thông tin",
+  "adminFullName": "Nguyễn Văn Admin",
+  "adminEmail": "admin@demoabc.com",
+  "adminPhone": "0909111222"
 }

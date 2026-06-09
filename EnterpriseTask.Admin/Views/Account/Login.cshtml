@@ -1,0 +1,89 @@
+@model AdminLoginViewModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Đăng nhập Web Admin";
+    ViewData["BodyClass"] = "login-body";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/auth.css" asp-append-version="true" />
+}
+
+<main class="login-page">
+        <section class="login-showcase">
+            <div class="showcase-glow showcase-glow-one"></div>
+            <div class="showcase-glow showcase-glow-two"></div>
+            <div class="showcase-content">
+                <a class="login-brand" asp-controller="Account" asp-action="Login">
+                    <span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5 12 3l7 3.5v11L12 21l-7-3.5v-11Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span>
+                    <span><strong>WorkFlow AI</strong><small>EnterpriseTaskAI</small></span>
+                </a>
+
+                <div class="showcase-message">
+                    <span class="eyebrow-pill">Smart enterprise operations</span>
+                    <h1>Quản trị công việc.<br /><span>Vận hành thông minh.</span></h1>
+                    <p>Tập trung dữ liệu doanh nghiệp, đội ngũ và tiến độ công việc trong một không gian quản trị hiện đại.</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+                            <span><strong>Tổng quan tức thời</strong><small>Nắm bắt chỉ số vận hành quan trọng</small></span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+                            <span><strong>Bảo mật theo vai trò</strong><small>Kiểm soát truy cập Web Admin an toàn</small></span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="showcase-footer">© 2026 WorkFlow AI. Enterprise productivity platform.</p>
+            </div>
+        </section>
+
+        <section class="login-form-panel">
+            <div class="login-card">
+                <div class="login-card-heading">
+                    <span class="mobile-brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5 12 3l7 3.5v11L12 21l-7-3.5v-11Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span>
+                    <span class="login-kicker">Web Admin Portal</span>
+                    <h2>Chào mừng trở lại</h2>
+                    <p>Đăng nhập để tiếp tục quản lý hệ thống của bạn.</p>
+                </div>
+
+                <form asp-controller="Account" asp-action="Login" method="post" class="login-form">
+                    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                    <div class="form-field">
+                        <label asp-for="Email">Email</label>
+                        <div class="input-shell">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"></path><path d="m4 7 8 6 8-6"></path></svg>
+                            <input asp-for="Email" type="email" placeholder="admin@company.com" autocomplete="username" />
+                        </div>
+                        <span asp-validation-for="Email" class="field-validation"></span>
+                    </div>
+                    <div class="form-field">
+                        <label asp-for="Password">Mật khẩu</label>
+                        <div class="input-shell">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+                            <input asp-for="Password" placeholder="Nhập mật khẩu" autocomplete="current-password" />
+                        </div>
+                        <span asp-validation-for="Password" class="field-validation"></span>
+                    </div>
+                    <label class="remember-option">
+                        <input asp-for="RememberMe" />
+                        <span class="custom-checkbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <button class="primary-button login-submit" type="submit">
+                        <span>Đăng nhập</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+                    </button>
+                </form>
+
+                <div class="login-support">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4m0-4h.01"></path></svg>
+                    <span>Chỉ tài khoản SystemAdmin và CompanyAdmin được phép truy cập.</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

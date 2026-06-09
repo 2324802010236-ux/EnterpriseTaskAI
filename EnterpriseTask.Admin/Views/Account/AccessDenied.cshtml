@@ -1,0 +1,28 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Không có quyền truy cập";
+    ViewData["BodyClass"] = "access-denied-body";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/auth.css" asp-append-version="true" />
+}
+
+<main class="access-denied-page">
+        <div class="access-denied-card">
+            <span class="access-denied-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v5m0 3h.01"></path></svg></span>
+            <span class="login-kicker">Access restricted</span>
+            <h1>Không có quyền truy cập</h1>
+            <p>Tài khoản của bạn không được phép truy cập khu vực này. Vui lòng đăng nhập bằng tài khoản quản trị phù hợp.</p>
+            <div class="access-denied-actions">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a class="primary-button" asp-controller="Dashboard" asp-action="Index">Quay lại dashboard</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post"><button class="secondary-button" type="submit">Đăng xuất</button></form>
+                }
+                else
+                {
+                    <a class="primary-button" asp-controller="Account" asp-action="Login">Quay lại đăng nhập</a>
+                }
+            </div>
+        </div>
+    </main>

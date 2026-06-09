@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --font-family-base: 'Roboto', Arial, sans-serif;
+
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-sidebar: #0f172a;
+    --color-sidebar-muted: #94a3b8;
+    --color-surface: #ffffff;
+    --color-background: #f5f7fb;
+    --color-text: #0f172a;
+    --color-muted: #64748b;
+    --color-border: #e8edf5;
+    --color-success: #22c55e;
+    --color-danger: #dc2626;
+
+    --shadow-card: 0 12px 35px rgba(15, 23, 42, .07);
+    --shadow-card-hover: 0 18px 42px rgba(15, 23, 42, .1);
+    --shadow-panel: 0 26px 70px rgba(15, 23, 42, .09);
+
+    --radius-sm: 8px;
+    --radius-md: 11px;
+    --radius-lg: 17px;
+    --radius-xl: 22px;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+
+    --sidebar-width: 260px;
+    --topbar-height: 76px;
+    --content-max-width: 1600px;
+
+    --transition-fast: .18s ease;
+    --transition-base: .22s ease;
+
+    /* Backward-compatible aliases for existing page styles. */
+    --primary: var(--color-primary);
+    --primary-dark: var(--color-primary-dark);
+    --sidebar: var(--color-sidebar);
+    --sidebar-muted: var(--color-sidebar-muted);
+    --surface: var(--color-surface);
+    --background: var(--color-background);
+    --text: var(--color-text);
+    --muted: var(--color-muted);
+    --border: var(--color-border);
+    --shadow: var(--shadow-card);
+}

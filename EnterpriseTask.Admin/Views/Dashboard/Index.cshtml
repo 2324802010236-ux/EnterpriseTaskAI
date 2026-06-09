@@ -1,0 +1,140 @@
+@model AdminDashboardViewModel
+@using EnterpriseTask.Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Dashboard";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var greetingName = string.IsNullOrWhiteSpace(currentUser?.FullName) ? "Quản trị viên" : currentUser.FullName;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/dashboard.css" asp-append-version="true" />
+}
+
+<section class="dashboard-header">
+    <div>
+        <span class="dashboard-greeting">Xin chào, @greetingName</span>
+        <h1>@Model.DashboardTitle</h1>
+        <p>@Model.DashboardSubtitle</p>
+    </div>
+    <div class="dashboard-date">
+        <span class="date-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4m-5 4h18"></path></svg></span>
+        <span><small>Hôm nay</small><strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong></span>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/pages/dashboard.js" asp-append-version="true"></script>
+}
+
+<section class="dashboard-grid" aria-label="Thống kê tổng quan">
+    @foreach (var stat in Model.StatCards)
+    {
+        <article class="stat-card">
+            <div class="stat-card-top">
+                <span class="stat-icon stat-icon-@stat.Icon">
+                    @switch (stat.Icon)
+                    {
+                        case "building":
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V6l7-3 7 3v15M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"></path></svg>
+                            break;
+                        case "activity":
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg>
+                            break;
+                        case "users":
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            break;
+                        case "departments":
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg>
+                            break;
+                        case "clock":
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                            break;
+                        default:
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4m8-4v4m-13 4h18m-13 4h3m-3 3h6"></path></svg>
+                            break;
+                    }
+                </span>
+                <span class="stat-trend"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 4 4 4-4"></path><path d="M14 9h6v6"></path></svg></span>
+            </div>
+            <span class="stat-title">@stat.Title</span>
+            <strong class="stat-value">@stat.Value.ToString("N0")</strong>
+            <p>@stat.Description</p>
+        </article>
+    }
+</section>
+
+@if (Model.RecentCompanies.Count > 0)
+{
+    <section class="data-panel">
+        <div class="panel-heading">
+            <div><span class="panel-kicker">Doanh nghiệp</span><h2>Công ty gần đây</h2></div>
+            <span class="panel-meta">@Model.RecentCompanies.Count bản ghi mới nhất</span>
+        </div>
+        <div class="table-responsive">
+            <table class="premium-table">
+                <thead><tr><th>Công ty</th><th>Email</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead>
+                <tbody>
+                    @foreach (var company in Model.RecentCompanies)
+                    {
+                        <tr>
+                            <td>
+                                <div class="table-identity">
+                                    <span class="company-avatar">@company.Name[..1].ToUpperInvariant()</span>
+                                    <span><strong>@company.Name</strong><small>ID #@company.Id</small></span>
+                                </div>
+                            </td>
+                            <td>@company.Email</td>
+                            <td><span class="status-badge @(company.Status == "Đang hoạt động" ? "status-active" : "status-muted")">@company.Status</span></td>
+                            <td>@company.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+
+<section class="data-panel">
+    <div class="panel-heading">
+        <div><span class="panel-kicker">Đội ngũ</span><h2>Người dùng gần đây</h2></div>
+        @if (Model.RecentUsers.Count > 0)
+        {
+            <span class="panel-meta">@Model.RecentUsers.Count bản ghi mới nhất</span>
+        }
+    </div>
+
+    @if (Model.RecentUsers.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="premium-table">
+                <thead><tr><th>Người dùng</th><th>Vai trò</th><th>Công ty</th><th>Ngày tạo</th></tr></thead>
+                <tbody>
+                    @foreach (var user in Model.RecentUsers)
+                    {
+                        var userInitial = string.IsNullOrWhiteSpace(user.FullName) ? "U" : user.FullName[..1].ToUpperInvariant();
+                        <tr>
+                            <td>
+                                <div class="table-identity">
+                                    <span class="user-table-avatar">@userInitial</span>
+                                    <span><strong>@user.FullName</strong><small>@user.Email</small></span>
+                                </div>
+                            </td>
+                            <td><span class="role-badge">@user.Role</span></td>
+                            <td>@(user.CompanyName ?? "Toàn hệ thống")</td>
+                            <td>@user.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <span class="empty-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm10-3v6m-3-3h6"></path></svg></span>
+            <h3>Chưa có người dùng</h3>
+            <p>Dữ liệu người dùng gần đây sẽ xuất hiện tại đây.</p>
+        </div>
+    }
+</section>

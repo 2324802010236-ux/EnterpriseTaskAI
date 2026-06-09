@@ -1,0 +1,109 @@
+@model List<EmployeeListItemViewModel>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+    var search = ViewBag.Search as string;
+    var selectedDepartmentId = ViewBag.DepartmentId as int?;
+    var selectedIsActive = ViewBag.IsActive as bool?;
+    var departments = ViewBag.Departments as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? [];
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/employees.css" asp-append-version="true" />
+}
+
+<section class="employee-page-header">
+    <div>
+        <span class="employee-kicker">Quản trị nhân sự</span>
+        <h1>Quản lý nhân viên</h1>
+        <p>Tạo tài khoản và phân quyền nhân sự trong công ty.</p>
+    </div>
+    <a class="primary-button employee-header-button" asp-action="Create">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14"></path></svg>
+        <span>Tạo nhân viên</span>
+    </a>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="employee-alert employee-alert-success">@successMessage</div>
+}
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="employee-alert employee-alert-error">@errorMessage</div>
+}
+
+<section class="employee-toolbar-card">
+    <form method="get" asp-action="Index" class="employee-toolbar">
+        <label class="employee-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <input name="search" value="@search" placeholder="Tìm theo tên, email hoặc số điện thoại" />
+        </label>
+        <select name="departmentId" class="employee-filter-select">
+            <option value="">Tất cả phòng ban</option>
+            @foreach (var department in departments)
+            {
+                <option value="@department.Value" selected="@(department.Value == selectedDepartmentId?.ToString() ? "selected" : null)">@department.Text</option>
+            }
+        </select>
+        <select name="isActive" class="employee-filter-select employee-status-filter">
+            <option value="">Tất cả trạng thái</option>
+            <option value="true" selected="@(selectedIsActive == true ? "selected" : null)">Đang hoạt động</option>
+            <option value="false" selected="@(selectedIsActive == false ? "selected" : null)">Đã khóa</option>
+        </select>
+        <button class="secondary-button employee-filter-button" type="submit">Áp dụng</button>
+        @if (!string.IsNullOrWhiteSpace(search) || selectedDepartmentId.HasValue || selectedIsActive.HasValue)
+        {
+            <a class="employee-clear-filter" asp-action="Index">Xóa lọc</a>
+        }
+    </form>
+</section>
+
+<section class="employee-list-panel">
+    <div class="employee-panel-heading">
+        <div><span class="employee-kicker">Danh sách nội bộ</span><h2>Tài khoản nhân sự</h2></div>
+        <span class="employee-result-count">@Model.Count nhân viên</span>
+    </div>
+    @if (Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="premium-table employee-table">
+                <thead><tr><th>Nhân viên</th><th>Liên hệ</th><th>Phòng ban</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var employee in Model)
+                {
+                    var roleLabel = employee.Role switch
+                    {
+                        AppRoles.Director => "Giám đốc",
+                        AppRoles.DepartmentManager => "Trưởng phòng",
+                        _ => "Nhân viên"
+                    };
+                    var roleClass = employee.Role switch
+                    {
+                        AppRoles.Director => "employee-role-director",
+                        AppRoles.DepartmentManager => "employee-role-manager",
+                        _ => "employee-role-staff"
+                    };
+                    <tr>
+                        <td><div class="employee-identity"><span class="employee-avatar">@employee.FullName[..1].ToUpperInvariant()</span><span><strong>@employee.FullName</strong><small>@(employee.Position ?? "Chưa cập nhật chức vụ")</small></span></div></td>
+                        <td><span class="employee-cell-main">@employee.Email</span><small class="employee-cell-sub">@(employee.PhoneNumber ?? "Chưa cập nhật SĐT")</small></td>
+                        <td>@(employee.DepartmentName ?? "Không thuộc phòng ban")</td>
+                        <td><span class="employee-role @roleClass">@roleLabel</span></td>
+                        <td><span class="employee-status @(employee.IsActive ? "employee-status-active" : "employee-status-inactive")">@(employee.IsActive ? "Đang hoạt động" : "Đã khóa")</span></td>
+                        <td>@employee.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        <td><div class="employee-row-actions">
+                            <a class="employee-action-button" asp-action="Details" asp-route-id="@employee.Id" title="Chi tiết"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+                            <a class="employee-action-button" asp-action="Edit" asp-route-id="@employee.Id" title="Sửa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg></a>
+                        </div></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state employee-empty-state">
+            <span class="empty-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+            <h3>Chưa có nhân viên phù hợp</h3><p>Thay đổi bộ lọc hoặc tạo tài khoản nhân viên đầu tiên.</p>
+        </div>
+    }
+</section>

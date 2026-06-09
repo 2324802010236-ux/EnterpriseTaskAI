@@ -1,0 +1,44 @@
+@model EmployeeDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết nhân viên";
+    var roleLabel = Model.Role switch
+    {
+        AppRoles.Director => "Giám đốc",
+        AppRoles.DepartmentManager => "Trưởng phòng",
+        _ => "Nhân viên"
+    };
+    var roleClass = Model.Role switch
+    {
+        AppRoles.Director => "employee-role-director",
+        AppRoles.DepartmentManager => "employee-role-manager",
+        _ => "employee-role-staff"
+    };
+}
+@section Styles { <link rel="stylesheet" href="~/css/pages/employees.css" asp-append-version="true" /> }
+<section class="employee-page-header employee-details-header">
+    <div><span class="employee-kicker">Hồ sơ nhân sự</span><h1>@Model.FullName</h1><p>Theo dõi quyền truy cập và thông tin tài khoản nhân viên.</p></div>
+    <div class="employee-header-actions">
+        <a class="secondary-button" asp-action="Index">Quay lại</a>
+        <a class="primary-button" asp-action="Edit" asp-route-id="@Model.Id">Sửa nhân viên</a>
+        <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post"><button class="employee-status-button @(Model.IsActive ? "employee-status-stop" : "employee-status-start")" type="submit">@(Model.IsActive ? "Khóa tài khoản" : "Kích hoạt")</button></form>
+        <form asp-action="ResetPassword" asp-route-id="@Model.Id" method="post"><button class="employee-reset-button" type="submit">Đặt lại mật khẩu</button></form>
+    </div>
+</section>
+@if (TempData["SuccessMessage"] is string successMessage) { <div class="employee-alert employee-alert-success">@successMessage</div> }
+@if (TempData["ErrorMessage"] is string errorMessage) { <div class="employee-alert employee-alert-error">@errorMessage</div> }
+@if (TempData["TemporaryPassword"] is string temporaryPassword)
+{
+    <section class="employee-password-card"><span><small>Mật khẩu tạm - chỉ hiển thị một lần</small><strong>@temporaryPassword</strong></span><p>Gửi mật khẩu này cho nhân viên qua kênh bảo mật và yêu cầu đổi sau lần đăng nhập đầu tiên.</p></section>
+}
+<section class="employee-profile-card">
+    <div class="employee-profile-main"><span class="employee-profile-avatar">@Model.FullName[..1].ToUpperInvariant()</span><div><span class="employee-status @(Model.IsActive ? "employee-status-active" : "employee-status-inactive")">@(Model.IsActive ? "Đang hoạt động" : "Đã khóa")</span><h2>@Model.FullName</h2><p>@(Model.Position ?? "Chưa cập nhật chức vụ")</p></div></div>
+    <span class="employee-role @roleClass">@roleLabel</span>
+</section>
+<section class="employee-information-card">
+    <div class="employee-information-heading"><span class="employee-kicker">Thông tin tài khoản</span><h2>Chi tiết nhân viên</h2></div>
+    <dl class="employee-information-grid">
+        <div><dt>Email</dt><dd>@Model.Email</dd></div><div><dt>Số điện thoại</dt><dd>@(Model.PhoneNumber ?? "Chưa cập nhật")</dd></div>
+        <div><dt>Phòng ban</dt><dd>@(Model.DepartmentName ?? "Không thuộc phòng ban")</dd></div><div><dt>Vai trò</dt><dd>@roleLabel</dd></div>
+        <div><dt>Ngày tạo</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd></div><div><dt>Đăng nhập gần nhất</dt><dd>@(Model.LastLoginAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "Chưa đăng nhập")</dd></div>
+    </dl>
+</section>

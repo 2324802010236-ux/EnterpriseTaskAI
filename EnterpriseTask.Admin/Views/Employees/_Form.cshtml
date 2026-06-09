@@ -1,0 +1,47 @@
+@model EmployeeFormViewModel
+@{
+    var showStatus = ViewData["ShowStatus"] as bool? == true;
+}
+<div asp-validation-summary="ModelOnly" class="validation-summary employee-validation-summary"></div>
+<div class="employee-form-grid">
+    <div class="employee-field">
+        <label asp-for="FullName">Họ và tên <span>*</span></label>
+        <input asp-for="FullName" class="employee-input" placeholder="Nhập họ tên nhân viên" />
+        <span asp-validation-for="FullName" class="field-validation"></span>
+    </div>
+    <div class="employee-field">
+        <label asp-for="Email">Email đăng nhập <span>*</span></label>
+        <input asp-for="Email" class="employee-input" type="email" placeholder="employee@company.com" />
+        <span asp-validation-for="Email" class="field-validation"></span>
+    </div>
+    <div class="employee-field">
+        <label asp-for="PhoneNumber">Số điện thoại</label>
+        <input asp-for="PhoneNumber" class="employee-input" placeholder="Nhập số điện thoại" />
+        <span asp-validation-for="PhoneNumber" class="field-validation"></span>
+    </div>
+    <div class="employee-field">
+        <label asp-for="Position">Chức vụ</label>
+        <input asp-for="Position" class="employee-input" placeholder="Ví dụ: Chuyên viên phát triển" />
+        <span asp-validation-for="Position" class="field-validation"></span>
+    </div>
+    <div class="employee-field">
+        <label asp-for="Role">Vai trò <span>*</span></label>
+        <select asp-for="Role" asp-items="Model.Roles" class="employee-input employee-select"></select>
+        <span asp-validation-for="Role" class="field-validation"></span>
+    </div>
+    <div class="employee-field">
+        <label asp-for="DepartmentId">Phòng ban</label>
+        <select asp-for="DepartmentId" asp-items="Model.Departments" class="employee-input employee-select">
+            <option value="">Không thuộc phòng ban</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="field-validation"></span>
+    </div>
+    @if (showStatus)
+    {
+        <label class="employee-option employee-field-wide">
+            <input asp-for="IsActive" />
+            <span class="employee-option-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+            <span><strong>Tài khoản đang hoạt động</strong><small>Tắt lựa chọn này để ngăn nhân viên đăng nhập.</small></span>
+        </label>
+    }
+</div>

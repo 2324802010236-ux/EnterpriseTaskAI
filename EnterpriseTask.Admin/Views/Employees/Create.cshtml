@@ -1,0 +1,24 @@
+@model EmployeeFormViewModel
+@{
+    ViewData["Title"] = "Tạo nhân viên";
+    var currentCount = ViewBag.EmployeeCount as int? ?? 0;
+    var maxEmployees = ViewBag.MaxEmployees as int?;
+}
+@section Styles { <link rel="stylesheet" href="~/css/pages/employees.css" asp-append-version="true" /> }
+
+<section class="employee-page-header employee-form-header">
+    <div><span class="employee-kicker">Tài khoản mới</span><h1>Tạo nhân viên</h1><p>Cấp tài khoản, phòng ban và quyền truy cập cho nhân sự mới.</p></div>
+    <a class="secondary-button" asp-action="Index">Quay lại danh sách</a>
+</section>
+<section class="employee-limit-card">
+    <span class="employee-limit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+    <span><small>Giới hạn gói hiện tại</small><strong>@currentCount / @(maxEmployees?.ToString("N0") ?? "Không xác định") nhân viên active đã sử dụng</strong></span>
+</section>
+<section class="employee-form-card">
+    <div class="employee-form-heading"><span class="employee-form-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14"></path></svg></span><div><h2>Thông tin tài khoản</h2><p>Hệ thống sẽ tạo và hiển thị mật khẩu tạm sau khi lưu.</p></div></div>
+    <form asp-action="Create" method="post">
+        <partial name="_Form" model="Model" />
+        <div class="employee-form-actions"><a class="secondary-button" asp-action="Index">Hủy</a><button class="primary-button" type="submit">Tạo tài khoản</button></div>
+    </form>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

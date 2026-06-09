@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using EnterpriseTask.Api.DTOs.Onboarding;
+using EnterpriseTask.Api.Services;
 using EnterpriseTask.Application.Common;
+using EnterpriseTask.Application.Interfaces;
 using EnterpriseTask.Domain.Constants;
 using EnterpriseTask.Domain.Entities;
 using EnterpriseTask.Domain.Enums;
@@ -20,6 +22,7 @@ public class CompanyOnboardingController(
     AppDbContext context,
     UserManager<ApplicationUser> userManager,
     IConfiguration configuration,
+    IEmailSender emailSender,
     ILogger<CompanyOnboardingController> logger) : ControllerBase
 {
     [HttpGet("subscription-plans")]
@@ -90,10 +93,12 @@ public class CompanyOnboardingController(
         var temporaryPassword = GenerateTemporaryPassword();
         var webAdminUrl = BuildWebAdminUrl();
 
+        Company company;
+        CompanySubscription subscription;
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            var company = new Company
+            company = new Company
             {
                 Name = request.CompanyName,
                 TaxCode = request.TaxCode,
@@ -108,7 +113,7 @@ public class CompanyOnboardingController(
             context.Companies.Add(company);
             await context.SaveChangesAsync(cancellationToken);
 
-            var subscription = new CompanySubscription
+            subscription = new CompanySubscription
             {
                 CompanyId = company.Id,
                 SubscriptionPlanId = plan.Id,
@@ -168,26 +173,6 @@ public class CompanyOnboardingController(
             }
 
             await transaction.CommitAsync(cancellationToken);
-
-            logger.LogInformation(
-                "Simulated email sent to {AdminEmail}: WebAdminUrl {WebAdminUrl}, TemporaryPassword {TemporaryPassword}",
-                request.AdminEmail,
-                webAdminUrl,
-                temporaryPassword);
-
-            // Demo only. In production, use set-password link instead of returning temporary password.
-            var response = new CompanyOnboardingResponse
-            {
-                Success = true,
-                Message = "Company subscription purchased and CompanyAdmin account created successfully.",
-                CompanyId = company.Id,
-                SubscriptionId = subscription.Id,
-                AdminEmail = request.AdminEmail,
-                TemporaryPassword = temporaryPassword,
-                WebAdminUrl = webAdminUrl
-            };
-
-            return Ok(ApiResponse<CompanyOnboardingResponse>.Succeeded(response, response.Message));
         }
         catch (Exception exception)
         {
@@ -196,6 +181,64 @@ public class CompanyOnboardingController(
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
                 FailedResponse("Company onboarding failed. No data was created."));
+        }
+
+        var emailSent = await TrySendWelcomeEmailAsync(
+            request,
+            plan,
+            subscription,
+            webAdminUrl,
+            temporaryPassword);
+        var message = emailSent
+            ? "Đăng ký gói thành công. Thông tin tài khoản quản trị đã được gửi qua email."
+            : "Đăng ký gói thành công nhưng gửi email thất bại. Vui lòng kiểm tra cấu hình SMTP.";
+
+        // Demo only. In production, use set-password link instead of temporary password.
+        var response = new CompanyOnboardingResponse
+        {
+            Success = true,
+            Message = message,
+            CompanyId = company.Id,
+            SubscriptionId = subscription.Id,
+            AdminEmail = request.AdminEmail,
+            TemporaryPassword = temporaryPassword,
+            WebAdminUrl = webAdminUrl
+        };
+
+        return Ok(ApiResponse<CompanyOnboardingResponse>.Succeeded(response, response.Message));
+    }
+
+    private async Task<bool> TrySendWelcomeEmailAsync(
+        CompanyOnboardingRequest request,
+        SubscriptionPlan plan,
+        CompanySubscription subscription,
+        string webAdminUrl,
+        string temporaryPassword)
+    {
+        try
+        {
+            await emailSender.SendEmailAsync(
+                request.AdminEmail,
+                "Tài khoản quản trị WorkFlow AI của công ty bạn đã được kích hoạt",
+                CompanyOnboardingEmailTemplates.BuildCompanyAdminWelcomeEmail(
+                    request.CompanyName,
+                    request.AdminFullName,
+                    plan.Name,
+                    plan.Price,
+                    subscription.StartDate,
+                    subscription.EndDate,
+                    webAdminUrl,
+                    request.AdminEmail,
+                    temporaryPassword));
+            return true;
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(
+                exception,
+                "Company onboarding succeeded, but welcome email delivery to {AdminEmail} failed.",
+                request.AdminEmail);
+            return false;
         }
     }
 

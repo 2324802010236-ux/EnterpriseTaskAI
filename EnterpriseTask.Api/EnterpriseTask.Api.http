@@ -1,6 +1,56 @@
-@EnterpriseTask.Api_HostAddress = http://localhost:5050
+@host = http://localhost:5050
+@systemAdminEmail = sysadmin@enterprisetask.local
+@systemAdminPassword = {{$processEnv SYSTEM_ADMIN_PASSWORD}}
+@companyAdminEmail = companyadmin.authdemo@enterprisetask.local
+@companyAdminPassword = {{$processEnv COMPANY_ADMIN_PASSWORD}}
+@systemAdminToken = paste-system-admin-token-here
+@companyAdminToken = paste-company-admin-token-here
 
-GET {{EnterpriseTask.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Register company and CompanyAdmin
+POST {{host}}/api/auth/register-company
+Content-Type: application/json
 
-###
+{
+  "companyName": "Auth Demo Company",
+  "taxCode": "AUTH-DEMO-001",
+  "companyEmail": "authdemo@enterprisetask.local",
+  "companyPhone": "0900000000",
+  "address": "Ho Chi Minh City",
+  "industry": "Technology",
+  "adminFullName": "Auth Demo Company Admin",
+  "adminEmail": "{{companyAdminEmail}}",
+  "adminPassword": "{{companyAdminPassword}}",
+  "adminPhone": "0911111111"
+}
+
+### Login SystemAdmin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{systemAdminEmail}}",
+  "password": "{{systemAdminPassword}}"
+}
+
+### Login CompanyAdmin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{companyAdminEmail}}",
+  "password": "{{companyAdminPassword}}"
+}
+
+### Get current user
+GET {{host}}/api/auth/me
+Authorization: Bearer {{companyAdminToken}}
+
+### Change password
+POST {{host}}/api/auth/change-password
+Authorization: Bearer {{companyAdminToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "{{companyAdminPassword}}",
+  "newPassword": "{{$processEnv COMPANY_ADMIN_NEW_PASSWORD}}"
+}

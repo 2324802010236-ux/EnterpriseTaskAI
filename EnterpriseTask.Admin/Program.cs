@@ -1,4 +1,5 @@
 using EnterpriseTask.Infrastructure;
+using EnterpriseTask.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,5 +30,9 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+using (var scope = app.Services.CreateScope())
+{
+    await AppDbInitializer.InitializeAsync(scope.ServiceProvider);
+}
 
 app.Run();

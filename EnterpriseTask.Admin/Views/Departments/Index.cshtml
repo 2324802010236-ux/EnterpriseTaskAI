@@ -1,0 +1,107 @@
+@model List<DepartmentListItemViewModel>
+@{
+    ViewData["Title"] = "Quản lý phòng ban";
+    var search = ViewBag.Search as string;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/departments.css" asp-append-version="true" />
+}
+
+<section class="department-page-header">
+    <div>
+        <span class="department-kicker">Cơ cấu tổ chức</span>
+        <h1>Quản lý phòng ban</h1>
+        <p>Tổ chức cơ cấu phòng ban trong công ty của bạn.</p>
+    </div>
+    <a class="primary-button department-header-button" asp-action="Create">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14"></path></svg>
+        <span>Tạo phòng ban</span>
+    </a>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="department-alert department-alert-success">@successMessage</div>
+}
+
+<section class="department-toolbar-card">
+    <form method="get" asp-action="Index" class="department-toolbar">
+        <label class="department-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <input name="search" value="@search" placeholder="Tìm theo tên phòng ban" />
+        </label>
+        <button class="secondary-button department-filter-button" type="submit">Tìm kiếm</button>
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a class="department-clear-filter" asp-action="Index">Xóa bộ lọc</a>
+        }
+    </form>
+</section>
+
+<section class="department-list-panel">
+    <div class="department-panel-heading">
+        <div>
+            <span class="department-kicker">Danh sách nội bộ</span>
+            <h2>Phòng ban trong công ty</h2>
+        </div>
+        <span class="department-result-count">@Model.Count phòng ban</span>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="premium-table department-table">
+                <thead>
+                    <tr>
+                        <th>Phòng ban</th>
+                        <th>Mô tả</th>
+                        <th>Nhân sự</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var department in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="department-identity">
+                                    <span class="department-avatar">@department.Name[..1].ToUpperInvariant()</span>
+                                    <span><strong>@department.Name</strong><small>ID #@department.Id</small></span>
+                                </div>
+                            </td>
+                            <td><span class="department-description">@(department.Description ?? "Chưa cập nhật mô tả")</span></td>
+                            <td><span class="department-employee-count">@department.EmployeeCount.ToString("N0") nhân viên</span></td>
+                            <td><span class="department-status @(department.IsActive ? "department-status-active" : "department-status-inactive")">@(department.IsActive ? "Đang hoạt động" : "Tạm ngưng")</span></td>
+                            <td>@department.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <div class="department-row-actions">
+                                    <a class="department-action-button" asp-action="Details" asp-route-id="@department.Id" title="Chi tiết">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </a>
+                                    <a class="department-action-button" asp-action="Edit" asp-route-id="@department.Id" title="Sửa">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg>
+                                    </a>
+                                    <form asp-action="ToggleStatus" asp-route-id="@department.Id" method="post">
+                                        <button class="department-action-button @(department.IsActive ? "department-action-warning" : "department-action-success")" type="submit" title="@(department.IsActive ? "Tạm ngưng" : "Kích hoạt")">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4 6.6a9 9 0 1 1-12.8 0M12 2v10"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state department-empty-state">
+            <span class="empty-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg></span>
+            <h3>Chưa có phòng ban</h3>
+            <p>Tạo phòng ban đầu tiên để bắt đầu tổ chức cơ cấu công ty.</p>
+        </div>
+    }
+</section>

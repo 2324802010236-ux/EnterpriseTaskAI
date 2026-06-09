@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Gói dịch vụ đã hết hạn";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/company-access.css" asp-append-version="true" />
+}
+
+<section class="company-access-page">
+    <article class="company-access-card">
+        <span class="company-access-icon company-access-icon-expired">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        </span>
+        <span class="company-access-kicker">Subscription expired</span>
+        <h1>Gói dịch vụ đã hết hạn</h1>
+        <p>Gói sử dụng của công ty đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.</p>
+        <div class="company-access-note">
+            <strong>Dữ liệu vẫn được bảo toàn</strong>
+            <span>Quyền truy cập Company Portal sẽ được khôi phục sau khi gói dịch vụ được gia hạn.</span>
+        </div>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button class="secondary-button" type="submit">Đăng xuất</button>
+        </form>
+    </article>
+</section>

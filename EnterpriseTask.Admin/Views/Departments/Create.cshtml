@@ -1,0 +1,41 @@
+@model DepartmentFormViewModel
+@{
+    ViewData["Title"] = "Tạo phòng ban";
+    var currentCount = ViewBag.DepartmentCount as int? ?? 0;
+    var maxDepartments = ViewBag.MaxDepartments as int?;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/departments.css" asp-append-version="true" />
+}
+
+<section class="department-page-header department-form-header">
+    <div>
+        <span class="department-kicker">Cơ cấu mới</span>
+        <h1>Tạo phòng ban</h1>
+        <p>Thiết lập đơn vị mới trong cơ cấu tổ chức của công ty.</p>
+    </div>
+    <a class="secondary-button" asp-action="Index">Quay lại danh sách</a>
+</section>
+
+<section class="department-limit-card">
+    <span class="department-limit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg></span>
+    <span><small>Giới hạn gói hiện tại</small><strong>@currentCount / @(maxDepartments?.ToString("N0") ?? "Không xác định") phòng ban đã sử dụng</strong></span>
+</section>
+
+<section class="department-form-card">
+    <div class="department-form-heading">
+        <span class="department-form-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg></span>
+        <div><h2>Thông tin phòng ban</h2><p>Phòng ban mới sẽ được kích hoạt ngay sau khi tạo.</p></div>
+    </div>
+    <form asp-action="Create" method="post">
+        <partial name="_Form" model="Model" />
+        <div class="department-form-actions">
+            <a class="secondary-button" asp-action="Index">Hủy</a>
+            <button class="primary-button" type="submit">Lưu phòng ban</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

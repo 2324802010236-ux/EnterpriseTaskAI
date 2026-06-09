@@ -1,0 +1,59 @@
+@model DepartmentDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết phòng ban";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/departments.css" asp-append-version="true" />
+}
+
+<section class="department-page-header department-details-header">
+    <div>
+        <span class="department-kicker">Chi tiết cơ cấu</span>
+        <h1>@Model.Name</h1>
+        <p>Theo dõi thông tin, chức năng và quy mô nhân sự của phòng ban.</p>
+    </div>
+    <div class="department-header-actions">
+        <a class="secondary-button" asp-action="Index">Quay lại</a>
+        <a class="primary-button" asp-action="Edit" asp-route-id="@Model.Id">Sửa phòng ban</a>
+        <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post">
+            <button class="department-status-button @(Model.IsActive ? "department-status-stop" : "department-status-start")" type="submit">
+                @(Model.IsActive ? "Tạm ngưng" : "Kích hoạt")
+            </button>
+        </form>
+    </div>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="department-alert department-alert-success">@successMessage</div>
+}
+
+<section class="department-profile-card">
+    <div class="department-profile-main">
+        <span class="department-profile-avatar">@Model.Name[..1].ToUpperInvariant()</span>
+        <div>
+            <span class="department-status @(Model.IsActive ? "department-status-active" : "department-status-inactive")">@(Model.IsActive ? "Đang hoạt động" : "Tạm ngưng")</span>
+            <h2>@Model.Name</h2>
+            <p>Phòng ban #@Model.Id</p>
+        </div>
+    </div>
+    <div class="department-profile-stat"><small>Nhân sự hiện tại</small><strong>@Model.EmployeeCount.ToString("N0")</strong><span>nhân viên</span></div>
+</section>
+
+<section class="department-details-grid">
+    <article class="department-information-card">
+        <div class="department-information-heading"><span class="department-kicker">Tổng quan</span><h2>Mô tả phòng ban</h2></div>
+        <p class="department-information-copy">@(Model.Description ?? "Chưa cập nhật mô tả cho phòng ban này.")</p>
+    </article>
+    <article class="department-information-card">
+        <div class="department-information-heading"><span class="department-kicker">Vận hành</span><h2>Chức năng và nhiệm vụ</h2></div>
+        <p class="department-information-copy">@(Model.FunctionDescription ?? "Chưa cập nhật chức năng và nhiệm vụ.")</p>
+    </article>
+</section>
+
+<section class="department-meta-card">
+    <dl>
+        <div><dt>Ngày tạo</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd></div>
+        <div><dt>Cập nhật gần nhất</dt><dd>@(Model.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "Chưa có cập nhật")</dd></div>
+    </dl>
+</section>

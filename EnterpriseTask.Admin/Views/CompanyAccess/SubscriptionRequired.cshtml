@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Công ty chưa có gói hoạt động";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/company-access.css" asp-append-version="true" />
+}
+
+<section class="company-access-page">
+    <article class="company-access-card">
+        <span class="company-access-icon company-access-icon-required">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path><path d="M2 5h20v14H2z"></path></svg>
+        </span>
+        <span class="company-access-kicker">Subscription required</span>
+        <h1>Công ty chưa có gói hoạt động</h1>
+        <p>Vui lòng mua hoặc kích hoạt gói dịch vụ để sử dụng trang quản trị công ty.</p>
+        <div class="company-access-note">
+            <strong>Trạng thái truy cập</strong>
+            <span>Company Portal sẽ được mở ngay khi công ty có gói dịch vụ đang hoạt động.</span>
+        </div>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button class="secondary-button" type="submit">Đăng xuất</button>
+        </form>
+    </article>
+</section>

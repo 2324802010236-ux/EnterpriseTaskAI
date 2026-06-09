@@ -1,0 +1,32 @@
+@model DepartmentFormViewModel
+@{
+    var showStatus = ViewData["ShowStatus"] as bool? == true;
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary department-validation-summary"></div>
+
+<div class="department-form-grid">
+    <div class="department-field department-field-wide">
+        <label asp-for="Name">Tên phòng ban <span>*</span></label>
+        <input asp-for="Name" class="department-input" placeholder="Ví dụ: Phòng Kinh doanh" />
+        <span asp-validation-for="Name" class="field-validation"></span>
+    </div>
+    <div class="department-field department-field-wide">
+        <label asp-for="Description">Mô tả ngắn</label>
+        <textarea asp-for="Description" class="department-input department-textarea" rows="3" placeholder="Mô tả vai trò tổng quan của phòng ban"></textarea>
+        <span asp-validation-for="Description" class="field-validation"></span>
+    </div>
+    <div class="department-field department-field-wide">
+        <label asp-for="FunctionDescription">Chức năng và nhiệm vụ</label>
+        <textarea asp-for="FunctionDescription" class="department-input department-textarea department-textarea-large" rows="5" placeholder="Mô tả chức năng, phạm vi trách nhiệm và nhiệm vụ chính"></textarea>
+        <span asp-validation-for="FunctionDescription" class="field-validation"></span>
+    </div>
+    @if (showStatus)
+    {
+        <label class="department-option">
+            <input asp-for="IsActive" />
+            <span class="department-option-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+            <span><strong>Phòng ban đang hoạt động</strong><small>Tắt lựa chọn này để tạm ngưng phòng ban.</small></span>
+        </label>
+    }
+</div>

@@ -1,10 +1,17 @@
 using EnterpriseTask.Infrastructure;
 using EnterpriseTask.Infrastructure.Data;
+using EnterpriseTask.Admin.Filters;
+using EnterpriseTask.Admin.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<CompanyPortalAccessService>();
+builder.Services.AddScoped<CompanyPortalAccessFilter>();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<CompanyPortalAccessFilter>();
+});
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";

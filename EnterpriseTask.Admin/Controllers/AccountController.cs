@@ -1,4 +1,5 @@
 using EnterpriseTask.Admin.ViewModels.Auth;
+using EnterpriseTask.Admin.Services;
 using EnterpriseTask.Domain.Constants;
 using EnterpriseTask.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,8 @@ namespace EnterpriseTask.Admin.Controllers;
 
 public class AccountController(
     SignInManager<ApplicationUser> signInManager,
-    UserManager<ApplicationUser> userManager) : Controller
+    UserManager<ApplicationUser> userManager,
+    CompanyPortalAccessService companyPortalAccessService) : Controller
 {
     [AllowAnonymous]
     [HttpGet]
@@ -120,7 +122,8 @@ public class AccountController(
 
         if (await userManager.IsInRoleAsync(user, AppRoles.CompanyAdmin))
         {
-            return Redirect("/company/dashboard");
+            var accessResult = await companyPortalAccessService.CheckAccessAsync(user);
+            return Redirect(CompanyPortalAccessService.GetRedirectPath(accessResult));
         }
 
         return null;

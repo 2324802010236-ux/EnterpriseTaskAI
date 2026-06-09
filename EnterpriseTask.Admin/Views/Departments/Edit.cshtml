@@ -1,0 +1,36 @@
+@model DepartmentFormViewModel
+@{
+    ViewData["Title"] = "Sửa phòng ban";
+    ViewData["ShowStatus"] = true;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/departments.css" asp-append-version="true" />
+}
+
+<section class="department-page-header department-form-header">
+    <div>
+        <span class="department-kicker">Cập nhật cơ cấu</span>
+        <h1>Sửa phòng ban</h1>
+        <p>Điều chỉnh thông tin và trạng thái hoạt động của phòng ban.</p>
+    </div>
+    <a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Quay lại chi tiết</a>
+</section>
+
+<section class="department-form-card">
+    <div class="department-form-heading">
+        <span class="department-form-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg></span>
+        <div><h2>Thông tin phòng ban</h2><p>Các thay đổi sẽ được áp dụng ngay sau khi lưu.</p></div>
+    </div>
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        <input asp-for="Id" type="hidden" />
+        <partial name="_Form" model="Model" view-data="ViewData" />
+        <div class="department-form-actions">
+            <a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Hủy</a>
+            <button class="primary-button" type="submit">Lưu thay đổi</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

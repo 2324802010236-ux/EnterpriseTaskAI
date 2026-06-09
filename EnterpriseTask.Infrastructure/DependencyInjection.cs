@@ -1,4 +1,6 @@
+using EnterpriseTask.Application.Interfaces;
 using EnterpriseTask.Infrastructure.Data;
+using EnterpriseTask.Infrastructure.Email;
 using EnterpriseTask.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,10 @@ public static class DependencyInjection
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
+        services.Configure<EmailSettings>(
+            configuration.GetSection(EmailSettings.SectionName));
+        services.AddScoped<IEmailSender, SmtpEmailSender>();
 
         return services;
     }

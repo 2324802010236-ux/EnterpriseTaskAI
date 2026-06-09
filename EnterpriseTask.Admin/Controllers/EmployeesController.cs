@@ -1,5 +1,7 @@
 using System.Security.Cryptography;
+using EnterpriseTask.Admin.Services;
 using EnterpriseTask.Admin.ViewModels.Employees;
+using EnterpriseTask.Application.Interfaces;
 using EnterpriseTask.Domain.Constants;
 using EnterpriseTask.Domain.Entities;
 using EnterpriseTask.Domain.Enums;
@@ -18,6 +20,7 @@ namespace EnterpriseTask.Admin.Controllers;
 public class EmployeesController(
     AppDbContext context,
     UserManager<ApplicationUser> userManager,
+    IEmailSender emailSender,
     ILogger<EmployeesController> logger) : Controller
 {
     private static readonly string[] ManagedRoles =
@@ -186,13 +189,27 @@ public class EmployeesController(
         await context.SaveChangesAsync();
         await transaction.CommitAsync();
 
-        logger.LogInformation(
-            "Simulated employee account email sent to {Email}: password {TemporaryPassword}",
+        var companyName = await context.Companies.AsNoTracking()
+            .Where(company => company.Id == companyId.Value)
+            .Select(company => company.Name)
+            .FirstAsync();
+        var emailSent = await TrySendEmailAsync(
             model.Email,
-            temporaryPassword);
+            "Tài khoản WorkFlow AI của bạn đã được tạo",
+            EmployeeEmailTemplates.BuildEmployeeAccountEmail(
+                model.FullName,
+                companyName,
+                model.Email,
+                temporaryPassword));
 
-        // Demo only. In production, send set-password link instead of plain temporary password.
+        // Demo only. In production, use set-password link instead of temporary password.
         TempData["SuccessMessage"] = "Đã tạo tài khoản nhân viên.";
+        if (!emailSent)
+        {
+            TempData["WarningMessage"] =
+                "Tài khoản đã được tạo nhưng gửi email thất bại. Vui lòng kiểm tra cấu hình SMTP.";
+        }
+
         TempData["TemporaryPassword"] = temporaryPassword;
         return RedirectToAction(nameof(Details), new { id = user.Id });
     }
@@ -429,15 +446,42 @@ public class EmployeesController(
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        logger.LogInformation(
-            "Simulated employee account email sent to {Email}: password {TemporaryPassword}",
-            user.Email,
-            temporaryPassword);
+        var email = user.Email ?? user.UserName ?? string.Empty;
+        var emailSent = await TrySendEmailAsync(
+            email,
+            "Mật khẩu WorkFlow AI của bạn đã được đặt lại",
+            EmployeeEmailTemplates.BuildPasswordResetEmail(
+                user.FullName,
+                email,
+                temporaryPassword));
 
-        // Demo only. In production, send set-password link instead of plain temporary password.
+        // Demo only. In production, use set-password link instead of temporary password.
         TempData["SuccessMessage"] = "Đã đặt lại mật khẩu nhân viên.";
+        if (!emailSent)
+        {
+            TempData["WarningMessage"] =
+                "Mật khẩu đã được đặt lại nhưng gửi email thất bại. Vui lòng kiểm tra cấu hình SMTP.";
+        }
+
         TempData["TemporaryPassword"] = temporaryPassword;
         return RedirectToAction(nameof(Details), new { id });
+    }
+
+    private async Task<bool> TrySendEmailAsync(string to, string subject, string htmlBody)
+    {
+        try
+        {
+            await emailSender.SendEmailAsync(to, subject, htmlBody);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(
+                exception,
+                "Employee operation succeeded, but email delivery to {Recipient} failed.",
+                to);
+            return false;
+        }
     }
 
     private IQueryable<string> GetManagedUserIds(int companyId) =>

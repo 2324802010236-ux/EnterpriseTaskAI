@@ -25,6 +25,7 @@
     </div>
 </section>
 @if (TempData["SuccessMessage"] is string successMessage) { <div class="employee-alert employee-alert-success">@successMessage</div> }
+@if (TempData["WarningMessage"] is string warningMessage) { <div class="employee-alert employee-alert-warning">@warningMessage</div> }
 @if (TempData["ErrorMessage"] is string errorMessage) { <div class="employee-alert employee-alert-error">@errorMessage</div> }
 @if (TempData["TemporaryPassword"] is string temporaryPassword)
 {

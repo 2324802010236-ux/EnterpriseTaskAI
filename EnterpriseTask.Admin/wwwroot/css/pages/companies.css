@@ -203,6 +203,16 @@
     background: #fff7df;
 }
 
+.status-pending {
+    color: #1d4ed8;
+    background: #eff6ff;
+}
+
+.status-expired {
+    color: #9a3412;
+    background: #fff7ed;
+}
+
 .status-deleted {
     color: #9f1239;
     background: #fff1f2;

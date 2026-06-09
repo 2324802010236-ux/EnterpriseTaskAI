@@ -47,8 +47,10 @@
         <div class="company-field">
             <label asp-for="Status">Trạng thái</label>
             <select asp-for="Status" class="company-input company-select">
+                <option value="@CompanyStatus.PendingPayment">Chờ thanh toán</option>
                 <option value="@CompanyStatus.Active">Đang hoạt động</option>
                 <option value="@CompanyStatus.Suspended">Tạm ngưng</option>
+                <option value="@CompanyStatus.Expired">Hết hạn</option>
                 <option value="@CompanyStatus.Deleted">Đã xóa</option>
             </select>
             <span asp-validation-for="Status" class="field-validation"></span>

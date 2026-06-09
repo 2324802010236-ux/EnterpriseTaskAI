@@ -37,8 +37,10 @@
         </label>
         <select name="status" class="company-filter-select">
             <option value="">Tất cả trạng thái</option>
+            <option value="@CompanyStatus.PendingPayment" selected="@(selectedStatus == CompanyStatus.PendingPayment ? "selected" : null)">Chờ thanh toán</option>
             <option value="@CompanyStatus.Active" selected="@(selectedStatus == CompanyStatus.Active ? "selected" : null)">Đang hoạt động</option>
             <option value="@CompanyStatus.Suspended" selected="@(selectedStatus == CompanyStatus.Suspended ? "selected" : null)">Tạm ngưng</option>
+            <option value="@CompanyStatus.Expired" selected="@(selectedStatus == CompanyStatus.Expired ? "selected" : null)">Hết hạn</option>
             <option value="@CompanyStatus.Deleted" selected="@(selectedStatus == CompanyStatus.Deleted ? "selected" : null)">Đã xóa</option>
         </select>
         <button class="secondary-button company-filter-button" type="submit">Áp dụng</button>
@@ -80,12 +82,16 @@
                         {
                             nameof(CompanyStatus.Active) => "Đang hoạt động",
                             nameof(CompanyStatus.Suspended) => "Tạm ngưng",
+                            nameof(CompanyStatus.PendingPayment) => "Chờ thanh toán",
+                            nameof(CompanyStatus.Expired) => "Hết hạn",
                             _ => "Đã xóa"
                         };
                         var statusClass = company.Status switch
                         {
                             nameof(CompanyStatus.Active) => "status-active",
                             nameof(CompanyStatus.Suspended) => "status-suspended",
+                            nameof(CompanyStatus.PendingPayment) => "status-pending",
+                            nameof(CompanyStatus.Expired) => "status-expired",
                             _ => "status-deleted"
                         };
                         <tr>
@@ -108,7 +114,7 @@
                                     <a class="company-action-button" asp-action="Edit" asp-route-id="@company.Id" title="Sửa">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg>
                                     </a>
-                                    @if (company.Status != nameof(CompanyStatus.Deleted))
+                                    @if (company.Status is nameof(CompanyStatus.Active) or nameof(CompanyStatus.Suspended))
                                     {
                                         <form asp-action="ToggleStatus" asp-route-id="@company.Id" method="post">
                                             <button class="company-action-button @(company.Status == nameof(CompanyStatus.Active) ? "company-action-warning" : "company-action-success")" type="submit" title="@(company.Status == nameof(CompanyStatus.Active) ? "Khóa" : "Mở")">

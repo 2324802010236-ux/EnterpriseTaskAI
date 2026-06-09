@@ -4,12 +4,16 @@
     {
         CompanyStatus.Active => "Đang hoạt động",
         CompanyStatus.Suspended => "Tạm ngưng",
+        CompanyStatus.PendingPayment => "Chờ thanh toán",
+        CompanyStatus.Expired => "Hết hạn",
         _ => "Đã xóa"
     };
     var statusClass = Model.Status switch
     {
         CompanyStatus.Active => "status-active",
         CompanyStatus.Suspended => "status-suspended",
+        CompanyStatus.PendingPayment => "status-pending",
+        CompanyStatus.Expired => "status-expired",
         _ => "status-deleted"
     };
 }

@@ -1,0 +1,97 @@
+@model List<SubscriptionPlanListItemViewModel>
+@{
+    ViewData["Title"] = "Gói dịch vụ";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/subscription-plans.css" asp-append-version="true" />
+}
+
+<section class="plan-page-header">
+    <div>
+        <span class="plan-kicker">Owner Portal</span>
+        <h1>Gói dịch vụ</h1>
+        <p>Thiết lập giới hạn vận hành và tính năng cung cấp cho doanh nghiệp trên nền tảng.</p>
+    </div>
+    <a class="primary-button plan-header-button" asp-action="Create">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14"></path></svg>
+        <span>Tạo gói dịch vụ</span>
+    </a>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="plan-alert plan-alert-success">@successMessage</div>
+}
+
+<section class="plan-list-panel">
+    <div class="plan-panel-heading">
+        <div>
+            <span class="plan-kicker">Danh mục thương mại</span>
+            <h2>Các gói đang cấu hình</h2>
+        </div>
+        <span class="plan-result-count">@Model.Count gói dịch vụ</span>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="premium-table plan-table">
+                <thead>
+                    <tr>
+                        <th>Gói dịch vụ</th>
+                        <th>Giá / thời hạn</th>
+                        <th>Giới hạn sử dụng</th>
+                        <th>Tính năng</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var plan in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="plan-identity">
+                                    <span class="plan-avatar">@plan.Name[..1].ToUpperInvariant()</span>
+                                    <span><strong>@plan.Name</strong><small>@plan.Code</small></span>
+                                </div>
+                            </td>
+                            <td><strong class="plan-price">@plan.Price.ToString("N0") đ</strong><small class="plan-cell-sub">@plan.DurationDays ngày</small></td>
+                            <td><span class="plan-cell-main">@plan.MaxEmployees.ToString("N0") nhân viên</span><small class="plan-cell-sub">@plan.MaxDepartments.ToString("N0") phòng ban</small></td>
+                            <td>
+                                <div class="plan-feature-list">
+                                    <span class="plan-feature @(plan.EnableAI ? "is-enabled" : "is-disabled")">AI</span>
+                                    <span class="plan-feature @(plan.EnableRealtimeChat ? "is-enabled" : "is-disabled")">Realtime chat</span>
+                                </div>
+                            </td>
+                            <td><span class="plan-status @(plan.IsActive ? "plan-status-active" : "plan-status-inactive")">@(plan.IsActive ? "Đang bật" : "Đã tắt")</span></td>
+                            <td>
+                                <div class="plan-row-actions">
+                                    <a class="plan-action-button" asp-action="Details" asp-route-id="@plan.Id" title="Chi tiết">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </a>
+                                    <a class="plan-action-button" asp-action="Edit" asp-route-id="@plan.Id" title="Sửa">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg>
+                                    </a>
+                                    <form asp-action="ToggleStatus" asp-route-id="@plan.Id" method="post">
+                                        <button class="plan-action-button @(plan.IsActive ? "plan-action-warning" : "plan-action-success")" type="submit" title="@(plan.IsActive ? "Tắt gói" : "Bật gói")">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4 6.6a9 9 0 1 1-12.8 0M12 2v10"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state plan-empty-state">
+            <span class="empty-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path><path d="M2 5h20v14H2z"></path></svg></span>
+            <h3>Chưa có gói dịch vụ</h3>
+            <p>Tạo gói đầu tiên để chuẩn bị quy trình đăng ký cho doanh nghiệp.</p>
+        </div>
+    }
+</section>

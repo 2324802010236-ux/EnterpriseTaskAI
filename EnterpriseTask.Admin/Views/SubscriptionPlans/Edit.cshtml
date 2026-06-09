@@ -1,0 +1,35 @@
+@model SubscriptionPlanFormViewModel
+@{
+    ViewData["Title"] = "Sửa gói dịch vụ";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/subscription-plans.css" asp-append-version="true" />
+}
+
+<section class="plan-page-header plan-form-header">
+    <div>
+        <span class="plan-kicker">Cập nhật danh mục</span>
+        <h1>Sửa gói dịch vụ</h1>
+        <p>Điều chỉnh mức giá, giới hạn và tính năng của gói đang cung cấp.</p>
+    </div>
+    <a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Quay lại chi tiết</a>
+</section>
+
+<section class="plan-form-card">
+    <div class="plan-form-heading">
+        <span class="plan-form-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg></span>
+        <div><h2>Thông tin gói dịch vụ</h2><p>Thay đổi chỉ áp dụng cho dữ liệu gói sau khi lưu.</p></div>
+    </div>
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        <input asp-for="Id" type="hidden" />
+        <partial name="_Form" model="Model" />
+        <div class="plan-form-actions">
+            <a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Hủy</a>
+            <button class="primary-button" type="submit">Lưu thay đổi</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

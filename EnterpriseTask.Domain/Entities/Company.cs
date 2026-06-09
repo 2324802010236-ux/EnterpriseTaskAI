@@ -18,4 +18,6 @@ public class Company
     public ICollection<Department> Departments { get; set; } = [];
     public ICollection<EmployeeProfile> EmployeeProfiles { get; set; } = [];
     public ICollection<WorkTask> WorkTasks { get; set; } = [];
+    public ICollection<CompanySubscription> CompanySubscriptions { get; set; } = [];
+    public ICollection<PaymentTransaction> PaymentTransactions { get; set; } = [];
 }

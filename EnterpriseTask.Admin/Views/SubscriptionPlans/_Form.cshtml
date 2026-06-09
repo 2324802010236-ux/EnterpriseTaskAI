@@ -1,0 +1,59 @@
+@model SubscriptionPlanFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="validation-summary plan-validation-summary"></div>
+
+<div class="plan-form-grid">
+    <div class="plan-field">
+        <label asp-for="Name">Tên gói dịch vụ <span>*</span></label>
+        <input asp-for="Name" class="plan-input" placeholder="Ví dụ: Business Plus" />
+        <span asp-validation-for="Name" class="field-validation"></span>
+    </div>
+    <div class="plan-field">
+        <label asp-for="Code">Mã gói <span>*</span></label>
+        <input asp-for="Code" class="plan-input plan-code-input" placeholder="BUSINESS_PLUS" />
+        <span asp-validation-for="Code" class="field-validation"></span>
+    </div>
+    <div class="plan-field plan-field-wide">
+        <label asp-for="Description">Mô tả <span>*</span></label>
+        <textarea asp-for="Description" class="plan-input plan-textarea" rows="4" placeholder="Mô tả ngắn về đối tượng phù hợp và giá trị của gói"></textarea>
+        <span asp-validation-for="Description" class="field-validation"></span>
+    </div>
+    <div class="plan-field">
+        <label asp-for="Price">Giá gói (VND) <span>*</span></label>
+        <input asp-for="Price" class="plan-input" type="number" min="0" step="1000" />
+        <span asp-validation-for="Price" class="field-validation"></span>
+    </div>
+    <div class="plan-field">
+        <label asp-for="DurationDays">Thời hạn (ngày) <span>*</span></label>
+        <input asp-for="DurationDays" class="plan-input" type="number" min="1" />
+        <span asp-validation-for="DurationDays" class="field-validation"></span>
+    </div>
+    <div class="plan-field">
+        <label asp-for="MaxEmployees">Nhân viên tối đa <span>*</span></label>
+        <input asp-for="MaxEmployees" class="plan-input" type="number" min="1" />
+        <span asp-validation-for="MaxEmployees" class="field-validation"></span>
+    </div>
+    <div class="plan-field">
+        <label asp-for="MaxDepartments">Phòng ban tối đa <span>*</span></label>
+        <input asp-for="MaxDepartments" class="plan-input" type="number" min="1" />
+        <span asp-validation-for="MaxDepartments" class="field-validation"></span>
+    </div>
+</div>
+
+<div class="plan-options">
+    <label class="plan-option">
+        <input asp-for="EnableAI" />
+        <span class="plan-option-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+        <span><strong>Tích hợp AI</strong><small>Cho phép sử dụng các tính năng AI trong gói.</small></span>
+    </label>
+    <label class="plan-option">
+        <input asp-for="EnableRealtimeChat" />
+        <span class="plan-option-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+        <span><strong>Realtime chat</strong><small>Bật tính năng trao đổi thời gian thực.</small></span>
+    </label>
+    <label class="plan-option">
+        <input asp-for="IsActive" />
+        <span class="plan-option-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span>
+        <span><strong>Cho phép đăng ký</strong><small>Hiển thị gói trong danh mục đang cung cấp.</small></span>
+    </label>
+</div>

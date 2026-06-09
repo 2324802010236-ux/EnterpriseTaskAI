@@ -184,7 +184,7 @@ public class CompaniesController(
         }
         else
         {
-            TempData["ErrorMessage"] = "Công ty đã xóa không thể khóa hoặc mở lại.";
+            TempData["ErrorMessage"] = "Trạng thái hiện tại không thể khóa hoặc mở trực tiếp.";
             return RedirectToAction(nameof(Details), new { id });
         }
 

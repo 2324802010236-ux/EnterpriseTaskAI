@@ -61,7 +61,11 @@ public class DashboardController(
                     ? "Đang hoạt động"
                     : company.Status == CompanyStatus.Suspended
                         ? "Tạm ngưng"
-                        : "Đã xóa",
+                        : company.Status == CompanyStatus.PendingPayment
+                            ? "Chờ thanh toán"
+                            : company.Status == CompanyStatus.Expired
+                                ? "Hết hạn"
+                                : "Đã xóa",
                 CreatedAt = company.CreatedAt
             })
             .ToListAsync();

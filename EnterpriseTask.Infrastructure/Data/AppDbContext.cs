@@ -21,6 +21,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<AiTaskSuggestion> AiTaskSuggestions => Set<AiTaskSuggestion>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
+    public DbSet<CompanySubscription> CompanySubscriptions => Set<CompanySubscription>();
+    public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -40,6 +43,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureNotification(builder);
         ConfigureAiTaskSuggestion(builder);
         ConfigureAuditLog(builder);
+        ConfigureSubscriptionPlan(builder);
+        ConfigureCompanySubscription(builder);
+        ConfigurePaymentTransaction(builder);
     }
 
     private static void ConfigureApplicationUser(ModelBuilder builder)
@@ -284,6 +290,66 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             entity.Property(x => x.Details).HasMaxLength(4000);
             entity.Property(x => x.IpAddress).HasMaxLength(45);
             entity.HasIndex(x => new { x.CompanyId, x.CreatedAt });
+        });
+    }
+
+    private static void ConfigureSubscriptionPlan(ModelBuilder builder)
+    {
+        builder.Entity<SubscriptionPlan>(entity =>
+        {
+            entity.ToTable("SubscriptionPlans");
+            entity.Property(x => x.Name).HasMaxLength(150);
+            entity.Property(x => x.Code).HasMaxLength(50);
+            entity.Property(x => x.Description).HasMaxLength(2000);
+            entity.Property(x => x.Price).HasPrecision(18, 2);
+            entity.HasIndex(x => x.Code).IsUnique();
+            entity.HasIndex(x => x.IsActive);
+        });
+    }
+
+    private static void ConfigureCompanySubscription(ModelBuilder builder)
+    {
+        builder.Entity<CompanySubscription>(entity =>
+        {
+            entity.ToTable("CompanySubscriptions");
+            entity.Property(x => x.Status).HasConversion<int>();
+            entity.HasIndex(x => new { x.CompanyId, x.Status });
+            entity.HasIndex(x => x.EndDate);
+
+            entity.HasOne(x => x.Company)
+                .WithMany(x => x.CompanySubscriptions)
+                .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.SubscriptionPlan)
+                .WithMany(x => x.CompanySubscriptions)
+                .HasForeignKey(x => x.SubscriptionPlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
+    private static void ConfigurePaymentTransaction(ModelBuilder builder)
+    {
+        builder.Entity<PaymentTransaction>(entity =>
+        {
+            entity.ToTable("PaymentTransactions");
+            entity.Property(x => x.Amount).HasPrecision(18, 2);
+            entity.Property(x => x.PaymentMethod).HasMaxLength(100);
+            entity.Property(x => x.Status).HasConversion<int>();
+            entity.Property(x => x.TransactionCode).HasMaxLength(150);
+            entity.Property(x => x.Note).HasMaxLength(2000);
+            entity.HasIndex(x => new { x.CompanyId, x.CreatedAt });
+            entity.HasIndex(x => x.TransactionCode);
+
+            entity.HasOne(x => x.Company)
+                .WithMany(x => x.PaymentTransactions)
+                .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.CompanySubscription)
+                .WithMany(x => x.PaymentTransactions)
+                .HasForeignKey(x => x.CompanySubscriptionId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

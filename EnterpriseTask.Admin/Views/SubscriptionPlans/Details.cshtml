@@ -1,0 +1,65 @@
+@model SubscriptionPlanDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết gói dịch vụ";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/subscription-plans.css" asp-append-version="true" />
+}
+
+<section class="plan-page-header plan-details-header">
+    <div>
+        <span class="plan-kicker">Chi tiết danh mục</span>
+        <h1>@Model.Name</h1>
+        <p>Theo dõi cấu hình, giới hạn và trạng thái cung cấp của gói dịch vụ.</p>
+    </div>
+    <div class="plan-header-actions">
+        <a class="secondary-button" asp-action="Index">Quay lại</a>
+        <a class="primary-button" asp-action="Edit" asp-route-id="@Model.Id">Sửa gói</a>
+        <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post">
+            <button class="plan-status-button @(Model.IsActive ? "plan-status-stop" : "plan-status-start")" type="submit">
+                @(Model.IsActive ? "Tắt gói" : "Bật gói")
+            </button>
+        </form>
+    </div>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="plan-alert plan-alert-success">@successMessage</div>
+}
+
+<section class="plan-profile-card">
+    <div class="plan-profile-main">
+        <span class="plan-profile-avatar">@Model.Name[..1].ToUpperInvariant()</span>
+        <div>
+            <span class="plan-status @(Model.IsActive ? "plan-status-active" : "plan-status-inactive")">@(Model.IsActive ? "Đang bật" : "Đã tắt")</span>
+            <h2>@Model.Name</h2>
+            <p>@Model.Code</p>
+        </div>
+    </div>
+    <div class="plan-price-block"><small>Giá niêm yết</small><strong>@Model.Price.ToString("N0") đ</strong><span>/ @Model.DurationDays ngày</span></div>
+</section>
+
+<section class="plan-mini-stats">
+    <article><span>Doanh nghiệp đăng ký</span><strong>@Model.CompanySubscriptionCount.ToString("N0")</strong></article>
+    <article><span>Nhân viên tối đa</span><strong>@Model.MaxEmployees.ToString("N0")</strong></article>
+    <article><span>Phòng ban tối đa</span><strong>@Model.MaxDepartments.ToString("N0")</strong></article>
+</section>
+
+<section class="plan-details-grid">
+    <article class="plan-information-card">
+        <div class="plan-information-heading"><span class="plan-kicker">Mô tả</span><h2>Thông tin gói</h2></div>
+        <p class="plan-description">@Model.Description</p>
+        <dl class="plan-information-list">
+            <div><dt>Ngày tạo</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd></div>
+            <div><dt>Cập nhật gần nhất</dt><dd>@(Model.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "Chưa có cập nhật")</dd></div>
+        </dl>
+    </article>
+    <article class="plan-information-card">
+        <div class="plan-information-heading"><span class="plan-kicker">Khả năng</span><h2>Tính năng cung cấp</h2></div>
+        <div class="plan-capabilities">
+            <div class="@(Model.EnableAI ? "is-enabled" : "is-disabled")"><span>AI hỗ trợ công việc</span><strong>@(Model.EnableAI ? "Đã bật" : "Không bao gồm")</strong></div>
+            <div class="@(Model.EnableRealtimeChat ? "is-enabled" : "is-disabled")"><span>Realtime chat</span><strong>@(Model.EnableRealtimeChat ? "Đã bật" : "Không bao gồm")</strong></div>
+        </div>
+    </article>
+</section>

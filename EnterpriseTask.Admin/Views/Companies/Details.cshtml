@@ -15,7 +15,7 @@
     <div class="company-header-actions">
         <a class="secondary-button" asp-action="Index">Quay lại</a>
         <a class="primary-button" asp-action="Edit" asp-route-id="@Model.Id">Sửa thông tin</a>
-        @if (Model.Status != CompanyStatus.Deleted)
+        @if (Model.Status is CompanyStatus.Active or CompanyStatus.Suspended)
         {
             <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post">
                 <button class="company-status-button @(Model.Status == CompanyStatus.Active ? "company-status-lock" : "company-status-open")" type="submit">

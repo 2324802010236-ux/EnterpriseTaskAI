@@ -1,0 +1,34 @@
+@model CompanyFormViewModel
+@{
+    ViewData["Title"] = "Tạo công ty";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/companies.css" asp-append-version="true" />
+}
+
+<section class="company-page-header company-form-header">
+    <div>
+        <span class="page-kicker">Doanh nghiệp mới</span>
+        <h1>Tạo công ty</h1>
+        <p>Khởi tạo hồ sơ doanh nghiệp mới trên nền tảng WorkFlow AI.</p>
+    </div>
+    <a class="secondary-button" asp-action="Index">Quay lại danh sách</a>
+</section>
+
+<section class="company-form-card">
+    <div class="company-form-heading">
+        <span class="company-form-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V6l7-3 7 3v15M9 9h1m4 0h1m-6 4h1m4 0h1"></path></svg></span>
+        <div><h2>Thông tin công ty</h2><p>Trạng thái mặc định khi tạo mới là đang hoạt động.</p></div>
+    </div>
+    <form asp-action="Create" method="post">
+        <partial name="_CompanyForm" model="Model" />
+        <div class="company-form-actions">
+            <a class="secondary-button" asp-action="Index">Hủy</a>
+            <button class="primary-button" type="submit">Lưu công ty</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -14,11 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const configuredPaths = link.dataset.activePaths
             ?.split(",")
             .map(normalizePath);
+        const activePrefix = link.dataset.activePrefix
+            ? normalizePath(link.dataset.activePrefix)
+            : null;
         const linkPath = link.getAttribute("href") === "#"
             ? null
             : normalizePath(new URL(link.href, window.location.origin).pathname);
 
-        if (configuredPaths?.includes(currentPath) || linkPath === currentPath) {
+        if (configuredPaths?.includes(currentPath)
+            || linkPath === currentPath
+            || (activePrefix
+                && (currentPath === activePrefix || currentPath.startsWith(`${activePrefix}/`)))) {
             link.classList.add("active");
         }
 

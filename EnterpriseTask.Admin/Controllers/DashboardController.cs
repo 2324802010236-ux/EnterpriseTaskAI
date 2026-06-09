@@ -10,13 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EnterpriseTask.Admin.Controllers;
 
-[Authorize(Roles = AppRoles.SystemAdmin + "," + AppRoles.CompanyAdmin)]
+[Authorize]
 public class DashboardController(
     AppDbContext context,
     UserManager<ApplicationUser> userManager) : Controller
 {
-    [HttpGet]
-    public async Task<IActionResult> Index()
+    [Authorize(Roles = AppRoles.SystemAdmin)]
+    [HttpGet("/owner/dashboard")]
+    public async Task<IActionResult> Owner()
     {
         var currentUser = await userManager.GetUserAsync(User);
         if (currentUser is null || !currentUser.IsActive)
@@ -24,20 +25,23 @@ public class DashboardController(
             return RedirectToAction("AccessDenied", "Account");
         }
 
-        if (await userManager.IsInRoleAsync(currentUser, AppRoles.SystemAdmin))
-        {
-            return View(await BuildSystemAdminDashboardAsync());
-        }
+        return View(await BuildOwnerDashboardAsync());
+    }
 
-        if (!currentUser.CompanyId.HasValue)
+    [Authorize(Roles = AppRoles.CompanyAdmin)]
+    [HttpGet("/company/dashboard")]
+    public async Task<IActionResult> Company()
+    {
+        var currentUser = await userManager.GetUserAsync(User);
+        if (currentUser is null || !currentUser.IsActive || !currentUser.CompanyId.HasValue)
         {
             return RedirectToAction("AccessDenied", "Account");
         }
 
-        return View(await BuildCompanyAdminDashboardAsync(currentUser.CompanyId.Value));
+        return View(await BuildCompanyDashboardAsync(currentUser.CompanyId.Value));
     }
 
-    private async Task<AdminDashboardViewModel> BuildSystemAdminDashboardAsync()
+    private async Task<AdminDashboardViewModel> BuildOwnerDashboardAsync()
     {
         var totalCompanies = await context.Companies.AsNoTracking().CountAsync();
         var activeCompanies = await context.Companies.AsNoTracking()
@@ -66,8 +70,8 @@ public class DashboardController(
 
         return new AdminDashboardViewModel
         {
-            DashboardTitle = "Tổng quan hệ thống",
-            DashboardSubtitle = "Theo dõi nhanh tình hình vận hành trên toàn bộ nền tảng.",
+            DashboardTitle = "Dashboard nền tảng",
+            DashboardSubtitle = "Theo dõi toàn bộ doanh nghiệp đang sử dụng WorkFlow AI.",
             StatCards =
             [
                 new() { Title = "Tổng công ty", Value = totalCompanies, Icon = "building", Description = "Tất cả doanh nghiệp trên hệ thống" },
@@ -80,7 +84,7 @@ public class DashboardController(
         };
     }
 
-    private async Task<AdminDashboardViewModel> BuildCompanyAdminDashboardAsync(int companyId)
+    private async Task<AdminDashboardViewModel> BuildCompanyDashboardAsync(int companyId)
     {
         var companyName = await context.Companies.AsNoTracking()
             .Where(company => company.Id == companyId)
@@ -91,7 +95,7 @@ public class DashboardController(
         {
             return new AdminDashboardViewModel
             {
-                DashboardTitle = "Tổng quan công ty",
+                DashboardTitle = "Dashboard công ty",
                 DashboardSubtitle = "Không tìm thấy thông tin công ty được liên kết với tài khoản."
             };
         }
@@ -120,8 +124,8 @@ public class DashboardController(
 
         return new AdminDashboardViewModel
         {
-            DashboardTitle = $"Tổng quan {companyName}",
-            DashboardSubtitle = "Theo dõi nhân sự, phòng ban và tiến độ công việc trong công ty.",
+            DashboardTitle = "Dashboard công ty",
+            DashboardSubtitle = "Theo dõi hoạt động nội bộ và dữ liệu quản trị của công ty.",
             StatCards =
             [
                 new() { Title = "Tổng nhân viên", Value = totalEmployees, Icon = "users", Description = "Hồ sơ nhân viên thuộc công ty" },

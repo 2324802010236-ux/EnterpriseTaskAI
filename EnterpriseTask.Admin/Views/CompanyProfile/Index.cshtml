@@ -1,0 +1,75 @@
+@model CompanyProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin công ty";
+    var statusLabel = Model.Status switch
+    {
+        CompanyStatus.Active => "Đang hoạt động",
+        CompanyStatus.Suspended => "Tạm ngưng",
+        _ => "Đã xóa"
+    };
+    var statusClass = Model.Status switch
+    {
+        CompanyStatus.Active => "status-active",
+        CompanyStatus.Suspended => "status-suspended",
+        _ => "status-deleted"
+    };
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/companies.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/company-profile.css" asp-append-version="true" />
+}
+
+<section class="company-page-header company-details-header">
+    <div>
+        <span class="page-kicker">Company Portal</span>
+        <h1>Thông tin công ty</h1>
+        <p>Theo dõi hồ sơ và quy mô vận hành của doanh nghiệp bạn đang quản lý.</p>
+    </div>
+    <a class="secondary-button" href="/company/dashboard">Quay lại dashboard</a>
+</section>
+
+<section class="company-profile-card company-portal-profile">
+    <div class="company-profile-main">
+        <span class="company-profile-avatar">@Model.Name[..1].ToUpperInvariant()</span>
+        <div>
+            <span class="status-badge @statusClass">@statusLabel</span>
+            <h2>@Model.Name</h2>
+            <p>@(Model.Industry ?? "Chưa cập nhật lĩnh vực hoạt động")</p>
+        </div>
+    </div>
+    <div class="company-profile-meta">
+        <span><small>Portal</small><strong>Company Admin</strong></span>
+        <span><small>Ngày tham gia</small><strong>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</strong></span>
+    </div>
+</section>
+
+<section class="company-mini-stats">
+    <article>
+        <span class="company-mini-icon company-mini-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg></span>
+        <span><small>Phòng ban</small><strong>@Model.DepartmentCount.ToString("N0")</strong></span>
+    </article>
+    <article>
+        <span class="company-mini-icon company-mini-purple"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 1 0 7.75"></path></svg></span>
+        <span><small>Nhân viên</small><strong>@Model.EmployeeCount.ToString("N0")</strong></span>
+    </article>
+    <article>
+        <span class="company-mini-icon company-mini-orange"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4m8-4v4m-13 4h18m-13 4h3m-3 3h6"></path></svg></span>
+        <span><small>Công việc</small><strong>@Model.TaskCount.ToString("N0")</strong></span>
+    </article>
+</section>
+
+<section class="company-information-card">
+    <div class="company-information-heading">
+        <span class="page-kicker">Hồ sơ doanh nghiệp</span>
+        <h2>Thông tin công ty</h2>
+    </div>
+    <dl class="company-information-grid">
+        <div><dt>Email</dt><dd>@Model.Email</dd></div>
+        <div><dt>Số điện thoại</dt><dd>@(Model.Phone ?? "Chưa cập nhật")</dd></div>
+        <div><dt>Mã số thuế</dt><dd>@(Model.TaxCode ?? "Chưa cập nhật")</dd></div>
+        <div><dt>Lĩnh vực</dt><dd>@(Model.Industry ?? "Chưa cập nhật")</dd></div>
+        <div class="company-information-wide"><dt>Địa chỉ</dt><dd>@(Model.Address ?? "Chưa cập nhật")</dd></div>
+        <div><dt>Trạng thái</dt><dd><span class="status-badge @statusClass">@statusLabel</span></dd></div>
+        <div><dt>Ngày tạo</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd></div>
+    </dl>
+</section>

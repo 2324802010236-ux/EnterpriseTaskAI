@@ -12,6 +12,9 @@
         : User.IsInRole(AppRoles.CompanyAdmin)
             ? "Company Admin"
             : "Admin Portal";
+    var portalHome = User.IsInRole(AppRoles.SystemAdmin) ? "/owner/dashboard" : "/company/dashboard";
+    var portalTitle = User.IsInRole(AppRoles.SystemAdmin) ? "Owner Portal" : "Company Portal";
+    var portalSubtitle = User.IsInRole(AppRoles.SystemAdmin) ? "Platform Administration" : "Company Administration";
     var initials = string.Join("", displayName
         .Split(' ', StringSplitOptions.RemoveEmptyEntries)
         .TakeLast(2)
@@ -30,50 +33,76 @@
 <body class="admin-body">
     <div class="admin-shell">
         <aside class="sidebar" id="adminSidebar">
-            <a class="sidebar-brand" asp-controller="Dashboard" asp-action="Index">
+            <a class="sidebar-brand" href="@portalHome">
                 <span class="brand-mark">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5 12 3l7 3.5v11L12 21l-7-3.5v-11Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg>
                 </span>
-                <span><strong>WorkFlow AI</strong><small>Enterprise Admin</small></span>
+                <span><strong>WorkFlow AI</strong><small>@portalTitle</small></span>
             </a>
 
             <nav class="sidebar-menu" aria-label="Điều hướng chính">
-                <span class="menu-label">Tổng quan</span>
-                <a class="sidebar-link active" asp-controller="Dashboard" asp-action="Index" data-active-paths="/,/dashboard,/dashboard/index">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
-                    <span>Dashboard</span>
-                </a>
-
-                <span class="menu-label">Quản lý</span>
-                <a class="sidebar-link" href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V6l7-3 7 3v15M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"></path></svg>
-                    <span>Công ty</span>
-                </a>
-                <a class="sidebar-link" href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg>
-                    <span>Phòng ban</span>
-                </a>
-                <a class="sidebar-link" href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>Nhân viên</span>
-                </a>
-                <a class="sidebar-link" href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4m-5 4h18m-13 4h3m-3 3h6"></path></svg>
-                    <span>Công việc</span>
-                </a>
-
-                <span class="menu-label">Hệ thống</span>
-                <a class="sidebar-link" href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 13h4"></path></svg>
-                    <span>Thông báo</span>
-                </a>
-                <a class="sidebar-link" href="#">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1A1.7 1.7 0 0 0 8 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 3.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.6h.1A1.7 1.7 0 0 0 3.6 8a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 8 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4v.1A1.7 1.7 0 0 0 15 3.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 8c.12.38.33.72.6 1 .3.27.68.41 1.1.4h.1v4h-.1A1.7 1.7 0 0 0 19.4 15Z"></path></svg>
-                    <span>Cấu hình</span>
-                </a>
+                @if (User.IsInRole(AppRoles.SystemAdmin))
+                {
+                    <span class="menu-label">Owner Portal</span>
+                    <a class="sidebar-link active" href="/owner/dashboard" data-active-paths="/owner/dashboard">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
+                        <span>Dashboard nền tảng</span>
+                    </a>
+                    <a class="sidebar-link" asp-controller="Companies" asp-action="Index" data-active-prefix="/owner/companies">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V6l7-3 7 3v15M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"></path></svg>
+                        <span>Công ty</span>
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path><path d="M2 5h20v14H2z"></path></svg>
+                        <span>Gói dịch vụ</span>
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18m-14 5h4"></path></svg>
+                        <span>Thanh toán</span>
+                    </a>
+                    <span class="menu-label">Hệ thống</span>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1A1.7 1.7 0 0 0 8 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 3.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.6h.1A1.7 1.7 0 0 0 3.6 8a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 8 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4v.1A1.7 1.7 0 0 0 15 3.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 8c.12.38.33.72.6 1 .3.27.68.41 1.1.4h.1v4h-.1A1.7 1.7 0 0 0 19.4 15Z"></path></svg>
+                        <span>Cấu hình hệ thống</span>
+                    </a>
+                }
+                else if (User.IsInRole(AppRoles.CompanyAdmin))
+                {
+                    <span class="menu-label">Company Portal</span>
+                    <a class="sidebar-link active" href="/company/dashboard" data-active-paths="/company/dashboard">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
+                        <span>Dashboard công ty</span>
+                    </a>
+                    <a class="sidebar-link" asp-controller="CompanyProfile" asp-action="Index" data-active-paths="/company/profile">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V6l7-3 7 3v15M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"></path></svg>
+                        <span>Thông tin công ty</span>
+                    </a>
+                    <span class="menu-label">Quản lý nội bộ</span>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h9v18M15 9h5v12M8 7h3m-3 4h3m-3 4h3m-7 6h17"></path></svg>
+                        <span>Phòng ban</span>
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Nhân viên</span>
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4m-5 4h18m-13 4h3m-3 3h6"></path></svg>
+                        <span>Công việc</span>
+                    </a>
+                    <span class="menu-label">Hệ thống công ty</span>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 13h4"></path></svg>
+                        <span>Thông báo</span>
+                    </a>
+                    <a class="sidebar-link" href="#">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1A1.7 1.7 0 0 0 8 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 3.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.6h.1A1.7 1.7 0 0 0 3.6 8a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 8 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4v.1A1.7 1.7 0 0 0 15 3.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 8c.12.38.33.72.6 1 .3.27.68.41 1.1.4h.1v4h-.1A1.7 1.7 0 0 0 19.4 15Z"></path></svg>
+                        <span>Cấu hình công ty</span>
+                    </a>
+                }
             </nav>
 
-            <div class="sidebar-footer"><span class="status-dot"></span><span>Hệ thống hoạt động ổn định</span></div>
+            <div class="sidebar-footer"><span class="status-dot"></span><span>@portalTitle hoạt động ổn định</span></div>
         </aside>
 
         <button class="sidebar-overlay" id="sidebarOverlay" type="button" aria-label="Đóng menu"></button>
@@ -83,7 +112,7 @@
                 <button class="icon-button mobile-menu-button" id="sidebarToggle" type="button" aria-label="Mở menu">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
-                <div class="topbar-context"><span class="topbar-eyebrow">WorkFlow AI</span><strong>Trung tâm quản trị</strong></div>
+                <div class="topbar-context"><span class="topbar-eyebrow">WorkFlow AI</span><strong>@portalSubtitle</strong></div>
                 <div class="topbar-actions">
                     <div class="user-summary">
                         <span class="user-avatar">@initials</span>

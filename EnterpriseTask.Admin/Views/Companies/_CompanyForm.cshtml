@@ -1,0 +1,57 @@
+@model CompanyFormViewModel
+@{
+    var showStatus = ViewData["ShowStatus"] as bool? == true;
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary company-validation-summary"></div>
+
+<div class="company-form-grid">
+    <div class="company-field company-field-wide">
+        <label asp-for="Name">Tên công ty <span>*</span></label>
+        <input asp-for="Name" class="company-input" placeholder="Nhập tên doanh nghiệp" />
+        <span asp-validation-for="Name" class="field-validation"></span>
+    </div>
+
+    <div class="company-field">
+        <label asp-for="TaxCode">Mã số thuế</label>
+        <input asp-for="TaxCode" class="company-input" placeholder="Ví dụ: 0312345678" />
+        <span asp-validation-for="TaxCode" class="field-validation"></span>
+    </div>
+
+    <div class="company-field">
+        <label asp-for="Industry">Lĩnh vực hoạt động</label>
+        <input asp-for="Industry" class="company-input" placeholder="Ví dụ: Công nghệ thông tin" />
+        <span asp-validation-for="Industry" class="field-validation"></span>
+    </div>
+
+    <div class="company-field">
+        <label asp-for="Email">Email công ty <span>*</span></label>
+        <input asp-for="Email" class="company-input" type="email" placeholder="contact@company.com" />
+        <span asp-validation-for="Email" class="field-validation"></span>
+    </div>
+
+    <div class="company-field">
+        <label asp-for="Phone">Số điện thoại</label>
+        <input asp-for="Phone" class="company-input" placeholder="Nhập số điện thoại" />
+        <span asp-validation-for="Phone" class="field-validation"></span>
+    </div>
+
+    <div class="company-field company-field-wide">
+        <label asp-for="Address">Địa chỉ</label>
+        <textarea asp-for="Address" class="company-input company-textarea" rows="3" placeholder="Nhập địa chỉ trụ sở"></textarea>
+        <span asp-validation-for="Address" class="field-validation"></span>
+    </div>
+
+    @if (showStatus)
+    {
+        <div class="company-field">
+            <label asp-for="Status">Trạng thái</label>
+            <select asp-for="Status" class="company-input company-select">
+                <option value="@CompanyStatus.Active">Đang hoạt động</option>
+                <option value="@CompanyStatus.Suspended">Tạm ngưng</option>
+                <option value="@CompanyStatus.Deleted">Đã xóa</option>
+            </select>
+            <span asp-validation-for="Status" class="field-validation"></span>
+        </div>
+    }
+</div>

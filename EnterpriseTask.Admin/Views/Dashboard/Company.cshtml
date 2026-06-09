@@ -1,0 +1,13 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard công ty";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/dashboard.css" asp-append-version="true" />
+}
+
+<partial name="Index" model="Model" />
+
+@section Scripts {
+    <script src="~/js/pages/dashboard.js" asp-append-version="true"></script>
+}

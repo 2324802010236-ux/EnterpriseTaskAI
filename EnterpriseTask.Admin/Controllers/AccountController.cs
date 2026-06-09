@@ -13,11 +13,17 @@ public class AccountController(
 {
     [AllowAnonymous]
     [HttpGet]
-    public IActionResult Login()
+    public async Task<IActionResult> Login()
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return RedirectToAction("Index", "Dashboard");
+            var existingPortalRedirect = await GetPortalRedirectAsync();
+            if (existingPortalRedirect is not null)
+            {
+                return existingPortalRedirect;
+            }
+
+            await signInManager.SignOutAsync();
         }
 
         return View(new AdminLoginViewModel());
@@ -30,7 +36,13 @@ public class AccountController(
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return RedirectToAction("Index", "Dashboard");
+            var existingPortalRedirect = await GetPortalRedirectAsync();
+            if (existingPortalRedirect is not null)
+            {
+                return existingPortalRedirect;
+            }
+
+            await signInManager.SignOutAsync();
         }
 
         if (!ModelState.IsValid)
@@ -63,10 +75,8 @@ public class AccountController(
             return View(model);
         }
 
-        var canAccessAdmin = await userManager.IsInRoleAsync(user, AppRoles.SystemAdmin)
-            || await userManager.IsInRoleAsync(user, AppRoles.CompanyAdmin);
-
-        if (!canAccessAdmin)
+        var portalRedirect = await GetPortalRedirectAsync(user);
+        if (portalRedirect is null)
         {
             await signInManager.SignOutAsync();
             ModelState.AddModelError(string.Empty, "Tài khoản không có quyền truy cập Web Admin.");
@@ -76,7 +86,7 @@ public class AccountController(
         user.LastLoginAt = DateTime.UtcNow;
         await userManager.UpdateAsync(user);
 
-        return RedirectToAction("Index", "Dashboard");
+        return portalRedirect;
     }
 
     [Authorize]
@@ -93,5 +103,26 @@ public class AccountController(
     public IActionResult AccessDenied()
     {
         return View();
+    }
+
+    private async Task<IActionResult?> GetPortalRedirectAsync(ApplicationUser? user = null)
+    {
+        user ??= await userManager.GetUserAsync(User);
+        if (user is null || !user.IsActive)
+        {
+            return null;
+        }
+
+        if (await userManager.IsInRoleAsync(user, AppRoles.SystemAdmin))
+        {
+            return Redirect("/owner/dashboard");
+        }
+
+        if (await userManager.IsInRoleAsync(user, AppRoles.CompanyAdmin))
+        {
+            return Redirect("/company/dashboard");
+        }
+
+        return null;
     }
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using EnterpriseTask.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using EnterpriseTask.Admin.Models;
 
@@ -8,9 +9,22 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
-        return User.Identity?.IsAuthenticated == true
-            ? RedirectToAction("Index", "Dashboard")
-            : RedirectToAction("Login", "Account");
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        if (User.IsInRole(AppRoles.SystemAdmin))
+        {
+            return Redirect("/owner/dashboard");
+        }
+
+        if (User.IsInRole(AppRoles.CompanyAdmin))
+        {
+            return Redirect("/company/dashboard");
+        }
+
+        return RedirectToAction("AccessDenied", "Account");
     }
 
     public IActionResult Privacy()

@@ -1,0 +1,36 @@
+@model CompanyFormViewModel
+@{
+    ViewData["Title"] = "Sửa công ty";
+    ViewData["ShowStatus"] = true;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/companies.css" asp-append-version="true" />
+}
+
+<section class="company-page-header company-form-header">
+    <div>
+        <span class="page-kicker">Cập nhật doanh nghiệp</span>
+        <h1>Sửa thông tin công ty</h1>
+        <p>Điều chỉnh thông tin hồ sơ và trạng thái vận hành của doanh nghiệp.</p>
+    </div>
+    <a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Quay lại chi tiết</a>
+</section>
+
+<section class="company-form-card">
+    <div class="company-form-heading">
+        <span class="company-form-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg></span>
+        <div><h2>Thông tin công ty</h2><p>Các thay đổi sẽ được ghi nhận ngay sau khi lưu.</p></div>
+    </div>
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        <input asp-for="Id" type="hidden" />
+        <partial name="_CompanyForm" model="Model" view-data="ViewData" />
+        <div class="company-form-actions">
+            <a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Hủy</a>
+            <button class="primary-button" type="submit">Lưu thay đổi</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

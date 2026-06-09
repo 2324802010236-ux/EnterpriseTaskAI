@@ -1,0 +1,38 @@
+@model CompanyDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết công ty";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/companies.css" asp-append-version="true" />
+}
+
+<section class="company-page-header company-details-header">
+    <div>
+        <span class="page-kicker">Chi tiết doanh nghiệp</span>
+        <h1>@Model.Name</h1>
+        <p>Xem thông tin, quy mô và trạng thái vận hành của công ty.</p>
+    </div>
+    <div class="company-header-actions">
+        <a class="secondary-button" asp-action="Index">Quay lại</a>
+        <a class="primary-button" asp-action="Edit" asp-route-id="@Model.Id">Sửa thông tin</a>
+        @if (Model.Status != CompanyStatus.Deleted)
+        {
+            <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post">
+                <button class="company-status-button @(Model.Status == CompanyStatus.Active ? "company-status-lock" : "company-status-open")" type="submit">
+                    @(Model.Status == CompanyStatus.Active ? "Khóa công ty" : "Mở công ty")
+                </button>
+            </form>
+        }
+    </div>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="company-alert company-alert-success">@successMessage</div>
+}
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="company-alert company-alert-error">@errorMessage</div>
+}
+
+<partial name="_CompanyDetailsContent" model="Model" />

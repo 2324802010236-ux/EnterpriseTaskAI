@@ -3,14 +3,9 @@
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
 @{
-    ViewData["Title"] = "Dashboard";
     var currentUser = await UserManager.GetUserAsync(User);
     var greetingName = string.IsNullOrWhiteSpace(currentUser?.FullName) ? "Quản trị viên" : currentUser.FullName;
 }
-@section Styles {
-    <link rel="stylesheet" href="~/css/pages/dashboard.css" asp-append-version="true" />
-}
-
 <section class="dashboard-header">
     <div>
         <span class="dashboard-greeting">Xin chào, @greetingName</span>
@@ -22,10 +17,6 @@
         <span><small>Hôm nay</small><strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong></span>
     </div>
 </section>
-
-@section Scripts {
-    <script src="~/js/pages/dashboard.js" asp-append-version="true"></script>
-}
 
 <section class="dashboard-grid" aria-label="Thống kê tổng quan">
     @foreach (var stat in Model.StatCards)

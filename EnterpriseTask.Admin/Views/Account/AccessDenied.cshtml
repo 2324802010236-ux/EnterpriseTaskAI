@@ -16,7 +16,7 @@
             <div class="access-denied-actions">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a class="primary-button" asp-controller="Dashboard" asp-action="Index">Quay lại dashboard</a>
+                    <a class="primary-button" href="@(User.IsInRole(AppRoles.SystemAdmin) ? "/owner/dashboard" : "/company/dashboard")">Quay lại dashboard</a>
                     <form asp-controller="Account" asp-action="Logout" method="post"><button class="secondary-button" type="submit">Đăng xuất</button></form>
                 }
                 else

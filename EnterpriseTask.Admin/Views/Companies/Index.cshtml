@@ -1,0 +1,135 @@
+@model List<CompanyListItemViewModel>
+@{
+    ViewData["Title"] = "Quản lý công ty";
+    var selectedStatus = ViewBag.Status as CompanyStatus?;
+    var search = ViewBag.Search as string;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/companies.css" asp-append-version="true" />
+}
+
+<section class="company-page-header">
+    <div>
+        <span class="page-kicker">Doanh nghiệp</span>
+        <h1>Quản lý công ty</h1>
+        <p>Theo dõi và quản trị các doanh nghiệp sử dụng nền tảng.</p>
+    </div>
+    <a class="primary-button company-header-button" asp-action="Create">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14"></path></svg>
+        <span>Tạo công ty</span>
+    </a>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="company-alert company-alert-success">@successMessage</div>
+}
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="company-alert company-alert-error">@errorMessage</div>
+}
+
+<section class="company-toolbar-card">
+    <form method="get" asp-action="Index" class="company-toolbar">
+        <label class="company-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <input name="search" value="@search" placeholder="Tìm theo tên hoặc email công ty" />
+        </label>
+        <select name="status" class="company-filter-select">
+            <option value="">Tất cả trạng thái</option>
+            <option value="@CompanyStatus.Active" selected="@(selectedStatus == CompanyStatus.Active ? "selected" : null)">Đang hoạt động</option>
+            <option value="@CompanyStatus.Suspended" selected="@(selectedStatus == CompanyStatus.Suspended ? "selected" : null)">Tạm ngưng</option>
+            <option value="@CompanyStatus.Deleted" selected="@(selectedStatus == CompanyStatus.Deleted ? "selected" : null)">Đã xóa</option>
+        </select>
+        <button class="secondary-button company-filter-button" type="submit">Áp dụng</button>
+        @if (!string.IsNullOrWhiteSpace(search) || selectedStatus.HasValue)
+        {
+            <a class="company-clear-filter" asp-action="Index">Xóa bộ lọc</a>
+        }
+    </form>
+</section>
+
+<section class="company-list-panel">
+    <div class="company-panel-heading">
+        <div>
+            <span class="page-kicker">Danh sách</span>
+            <h2>Công ty trên hệ thống</h2>
+        </div>
+        <span class="company-result-count">@Model.Count công ty</span>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="premium-table company-table">
+                <thead>
+                    <tr>
+                        <th>Công ty</th>
+                        <th>Liên hệ</th>
+                        <th>Lĩnh vực</th>
+                        <th>Quy mô</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var company in Model)
+                    {
+                        var statusLabel = company.Status switch
+                        {
+                            nameof(CompanyStatus.Active) => "Đang hoạt động",
+                            nameof(CompanyStatus.Suspended) => "Tạm ngưng",
+                            _ => "Đã xóa"
+                        };
+                        var statusClass = company.Status switch
+                        {
+                            nameof(CompanyStatus.Active) => "status-active",
+                            nameof(CompanyStatus.Suspended) => "status-suspended",
+                            _ => "status-deleted"
+                        };
+                        <tr>
+                            <td>
+                                <div class="table-identity">
+                                    <span class="company-avatar">@company.Name[..1].ToUpperInvariant()</span>
+                                    <span><strong>@company.Name</strong><small>ID #@company.Id</small></span>
+                                </div>
+                            </td>
+                            <td><span class="company-cell-main">@company.Email</span><small class="company-cell-sub">@(company.Phone ?? "Chưa cập nhật SĐT")</small></td>
+                            <td>@(company.Industry ?? "Chưa cập nhật")</td>
+                            <td><span class="company-count">@company.DepartmentCount phòng ban</span><small class="company-cell-sub">@company.UserCount người dùng</small></td>
+                            <td><span class="status-badge @statusClass">@statusLabel</span></td>
+                            <td>@company.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <div class="company-row-actions">
+                                    <a class="company-action-button" asp-action="Details" asp-route-id="@company.Id" title="Chi tiết">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </a>
+                                    <a class="company-action-button" asp-action="Edit" asp-route-id="@company.Id" title="Sửa">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path><path d="m12 6 6 6"></path></svg>
+                                    </a>
+                                    @if (company.Status != nameof(CompanyStatus.Deleted))
+                                    {
+                                        <form asp-action="ToggleStatus" asp-route-id="@company.Id" method="post">
+                                            <button class="company-action-button @(company.Status == nameof(CompanyStatus.Active) ? "company-action-warning" : "company-action-success")" type="submit" title="@(company.Status == nameof(CompanyStatus.Active) ? "Khóa" : "Mở")">
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state company-empty-state">
+            <span class="empty-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V6l7-3 7 3v15M9 9h1m4 0h1m-6 4h1m4 0h1"></path></svg></span>
+            <h3>Chưa tìm thấy công ty</h3>
+            <p>Thay đổi bộ lọc hoặc tạo công ty đầu tiên trên hệ thống.</p>
+        </div>
+    }
+</section>

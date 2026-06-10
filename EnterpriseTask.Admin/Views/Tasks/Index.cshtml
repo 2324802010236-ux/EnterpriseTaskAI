@@ -1,0 +1,60 @@
+@model List<TaskListItemViewModel>
+@{
+    ViewData["Title"] = "Quản lý công việc";
+    var search = ViewBag.Search as string;
+    var selectedStatus = ViewBag.Status as WorkTaskStatus?;
+    var selectedPriority = ViewBag.Priority as WorkTaskPriority?;
+    var selectedDepartmentId = ViewBag.DepartmentId as int?;
+    var departments = ViewBag.Departments as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? [];
+}
+@section Styles { <link rel="stylesheet" href="~/css/pages/tasks.css" asp-append-version="true" /> }
+
+<section class="task-page-header">
+    <div><span class="task-kicker">Điều phối công việc</span><h1>Quản lý công việc</h1><p>Tạo, phân công và theo dõi tiến độ công việc trong công ty.</p></div>
+    <a class="primary-button task-header-button" asp-action="Create"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14"></path></svg><span>Tạo công việc</span></a>
+</section>
+
+@if (TempData["SuccessMessage"] is string successMessage) { <div class="task-alert task-alert-success">@successMessage</div> }
+@if (TempData["ErrorMessage"] is string errorMessage) { <div class="task-alert task-alert-error">@errorMessage</div> }
+
+<section class="task-toolbar-card">
+    <form method="get" asp-action="Index" class="task-toolbar">
+        <label class="task-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input name="search" value="@search" placeholder="Tìm theo tiêu đề hoặc mô tả" /></label>
+        <select name="status" class="task-filter-select"><option value="">Tất cả trạng thái</option>@foreach (var value in Enum.GetValues<WorkTaskStatus>()) { <option value="@((int)value)" selected="@(selectedStatus == value ? "selected" : null)">@value</option> }</select>
+        <select name="priority" class="task-filter-select"><option value="">Tất cả ưu tiên</option>@foreach (var value in Enum.GetValues<WorkTaskPriority>()) { <option value="@((int)value)" selected="@(selectedPriority == value ? "selected" : null)">@value</option> }</select>
+        <select name="departmentId" class="task-filter-select"><option value="">Tất cả phòng ban</option>@foreach (var department in departments) { <option value="@department.Value" selected="@(department.Value == selectedDepartmentId?.ToString() ? "selected" : null)">@department.Text</option> }</select>
+        <button class="secondary-button task-filter-button" type="submit">Áp dụng</button>
+        @if (!string.IsNullOrWhiteSpace(search) || selectedStatus.HasValue || selectedPriority.HasValue || selectedDepartmentId.HasValue) { <a class="task-clear-filter" asp-action="Index">Xóa lọc</a> }
+    </form>
+</section>
+
+<section class="task-list-panel">
+    <div class="task-panel-heading"><div><span class="task-kicker">Danh sách công ty</span><h2>Công việc đang quản lý</h2></div><span class="task-result-count">@Model.Count công việc</span></div>
+    @if (Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="premium-table task-table">
+                <thead><tr><th>Công việc</th><th>Phân công</th><th>Trạng thái</th><th>Ưu tiên</th><th>Hạn xử lý</th><th>Ngày tạo</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var task in Model)
+                {
+                    var isOverdue = task.DueDate.HasValue && task.DueDate.Value.Date < DateTime.UtcNow.Date && task.Status is not "Done" and not "Cancelled";
+                    <tr>
+                        <td><div class="task-identity"><span class="task-mark"></span><span><strong>@task.Title</strong><small>@(task.Description ?? "Chưa có mô tả")</small></span></div></td>
+                        <td><span class="task-assignee">@(task.AssignedToName ?? task.DepartmentName ?? "Chưa phân công")</span><small class="task-cell-sub">@task.AssignmentTarget</small></td>
+                        <td><span class="task-status task-status-@task.Status.ToLowerInvariant()">@task.Status</span></td>
+                        <td><span class="task-priority task-priority-@task.Priority.ToLowerInvariant()">@task.Priority</span></td>
+                        <td><span class="@(isOverdue ? "task-due-overdue" : "task-due")">@(task.DueDate?.ToLocalTime().ToString("dd/MM/yyyy") ?? "Không giới hạn")</span></td>
+                        <td>@task.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        <td><div class="task-row-actions"><a class="task-action-button" asp-action="Details" asp-route-id="@task.Id" title="Chi tiết"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg></a><a class="task-action-button" asp-action="Edit" asp-route-id="@task.Id" title="Sửa"><svg viewBox="0 0 24 24"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path></svg></a></div></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state task-empty-state"><span class="empty-state-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4m-5 4h18m-13 4h3m-3 3h6"></path></svg></span><h3>Chưa có công việc</h3><p>Tạo công việc đầu tiên để bắt đầu phân công và theo dõi tiến độ.</p></div>
+    }
+</section>

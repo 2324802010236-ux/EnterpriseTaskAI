@@ -1,0 +1,27 @@
+@model TaskDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết công việc";
+    var isCancelled = Model.Status == nameof(WorkTaskStatus.Cancelled);
+}
+@section Styles { <link rel="stylesheet" href="~/css/pages/tasks.css" asp-append-version="true" /> }
+<section class="task-page-header task-details-header">
+    <div><span class="task-kicker">Chi tiết công việc #@Model.Id</span><h1>@Model.Title</h1><p>Theo dõi phân công, tiến độ và lịch sử thay đổi.</p></div>
+    <div class="task-header-actions"><a class="secondary-button" asp-action="Index">Quay lại</a><a class="primary-button" asp-action="Edit" asp-route-id="@Model.Id">Sửa công việc</a>@if (!isCancelled) { <form asp-action="Cancel" asp-route-id="@Model.Id" method="post"><button class="task-cancel-button" type="submit">Hủy công việc</button></form> }</div>
+</section>
+@if (TempData["SuccessMessage"] is string successMessage) { <div class="task-alert task-alert-success">@successMessage</div> }
+@if (TempData["ErrorMessage"] is string errorMessage) { <div class="task-alert task-alert-error">@errorMessage</div> }
+
+<section class="task-summary-card">
+    <div class="task-summary-main"><span class="task-status task-status-@Model.Status.ToLowerInvariant()">@Model.Status</span><h2>@Model.Title</h2><p>@(Model.Description ?? "Chưa có mô tả chi tiết.")</p></div>
+    <div class="task-summary-meta"><span><small>Ưu tiên</small><strong class="task-priority task-priority-@Model.Priority.ToLowerInvariant()">@Model.Priority</strong></span><span><small>Hạn xử lý</small><strong>@(Model.DueDate?.ToLocalTime().ToString("dd/MM/yyyy") ?? "Không giới hạn")</strong></span><span><small>Phân công</small><strong>@(Model.AssignedToName ?? Model.DepartmentName ?? "Chưa phân công")</strong></span><span><small>Người tạo</small><strong>@(Model.CreatedByName ?? "Không xác định")</strong></span></div>
+</section>
+
+<section class="task-status-card">
+    <div><span class="task-kicker">Điều phối tiến độ</span><h2>Cập nhật trạng thái</h2></div>
+    <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post"><select name="status" class="task-input task-select">@foreach (var status in Enum.GetValues<WorkTaskStatus>()) { <option value="@((int)status)" selected="@(Model.Status == status.ToString() ? "selected" : null)">@status</option> }</select><button class="primary-button" type="submit">Cập nhật</button></form>
+</section>
+
+<div class="task-details-grid">
+    <section class="task-timeline-card"><div class="task-section-heading"><span class="task-kicker">Lịch sử</span><h2>Thay đổi trạng thái</h2></div>@if (Model.StatusHistories.Count > 0) { <div class="task-timeline">@foreach (var item in Model.StatusHistories) { <article><span class="task-timeline-dot"></span><div><strong>@(item.OldStatus ?? "Khởi tạo") → @item.NewStatus</strong><p>@(item.ChangedByName ?? "Không xác định")</p><small>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small></div></article> }</div> } else { <div class="task-mini-empty">Chưa có lịch sử trạng thái.</div> }</section>
+    <section class="task-comment-card"><div class="task-section-heading"><span class="task-kicker">Trao đổi</span><h2>Bình luận gần đây</h2></div>@if (Model.Comments.Count > 0) { <div class="task-comments">@foreach (var item in Model.Comments) { <article><span>@item.AuthorName[..1].ToUpperInvariant()</span><div><strong>@item.AuthorName</strong><p>@item.Content</p><small>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small></div></article> }</div> } else { <div class="task-mini-empty">Chưa có bình luận cho công việc này.</div> }</section>
+</div>

@@ -1,0 +1,5 @@
+@model TaskFormViewModel
+@{ ViewData["Title"] = "Sửa công việc"; }
+@section Styles { <link rel="stylesheet" href="~/css/pages/tasks.css" asp-append-version="true" /> }
+<section class="task-page-header task-form-header"><div><span class="task-kicker">Cập nhật công việc</span><h1>Sửa công việc</h1><p>Điều chỉnh thông tin cơ bản và đối tượng được phân công.</p></div><a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Quay lại</a></section>
+<section class="task-form-card"><div class="task-form-heading"><span class="task-form-icon"><svg viewBox="0 0 24 24"><path d="m14 4 6 6L8 22H2v-6L14 4Z"></path></svg></span><div><h2>@Model.Title</h2><p>Trạng thái hiện tại: @Model.Status</p></div></div><form asp-action="Edit" asp-route-id="@Model.Id" method="post"><input asp-for="Id" type="hidden" /><partial name="_Form" model="Model" /><div class="task-form-actions"><a class="secondary-button" asp-action="Details" asp-route-id="@Model.Id">Hủy</a><button class="primary-button" type="submit">Lưu thay đổi</button></div></form></section>

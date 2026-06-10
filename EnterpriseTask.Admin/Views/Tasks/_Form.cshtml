@@ -1,0 +1,11 @@
+@model TaskFormViewModel
+<div asp-validation-summary="ModelOnly" class="validation-summary task-validation-summary"></div>
+<div class="task-form-grid">
+    <div class="task-field task-field-wide"><label asp-for="Title">Tiêu đề công việc <span>*</span></label><input asp-for="Title" class="task-input" placeholder="Nhập tiêu đề công việc" /><span asp-validation-for="Title" class="field-validation"></span></div>
+    <div class="task-field task-field-wide"><label asp-for="Description">Mô tả</label><textarea asp-for="Description" class="task-input task-textarea" rows="5" placeholder="Mô tả yêu cầu và kết quả mong đợi"></textarea><span asp-validation-for="Description" class="field-validation"></span></div>
+    <div class="task-field"><label asp-for="Priority">Độ ưu tiên <span>*</span></label><select asp-for="Priority" asp-items="Model.Priorities" class="task-input task-select"></select><span asp-validation-for="Priority" class="field-validation"></span></div>
+    <div class="task-field"><label asp-for="DueDate">Hạn xử lý</label><input asp-for="DueDate" class="task-input" type="date" /><span asp-validation-for="DueDate" class="field-validation"></span></div>
+    <div class="task-field task-field-wide"><label asp-for="AssignmentTargetType">Kiểu phân công <span>*</span></label><select asp-for="AssignmentTargetType" asp-items="Model.AssignmentTargetTypes" class="task-input task-select"></select><span asp-validation-for="AssignmentTargetType" class="field-validation"></span><small>Chọn đúng kiểu phân công và đối tượng tương ứng bên dưới.</small></div>
+    <div class="task-field"><label asp-for="AssignedUserId">Nhân viên</label><select asp-for="AssignedUserId" asp-items="Model.Users" class="task-input task-select"><option value="">Chọn nhân viên</option></select><span asp-validation-for="AssignedUserId" class="field-validation"></span></div>
+    <div class="task-field"><label asp-for="DepartmentId">Phòng ban</label><select asp-for="DepartmentId" asp-items="Model.Departments" class="task-input task-select"><option value="">Chọn phòng ban</option></select><span asp-validation-for="DepartmentId" class="field-validation"></span></div>
+</div>

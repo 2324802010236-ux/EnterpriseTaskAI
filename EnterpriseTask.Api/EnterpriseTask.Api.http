@@ -15,6 +15,7 @@
 @departmentManagerToken = paste-department-manager-token-here
 @directorToken = paste-director-token-here
 @subscriptionPlanId = 1
+@mobileTaskId = 1
 
 ### Register company and CompanyAdmin
 POST {{host}}/api/auth/register-company
@@ -138,4 +139,47 @@ Authorization: Bearer {{departmentManagerToken}}
 
 ### Mobile workspace - Director features
 GET {{host}}/api/mobile/features
+Authorization: Bearer {{directorToken}}
+
+### Mobile tasks - list related Employee tasks
+GET {{host}}/api/mobile/tasks?search=&status=Assigned&priority=High
+Authorization: Bearer {{employeeToken}}
+
+### Mobile tasks - task details
+GET {{host}}/api/mobile/tasks/{{mobileTaskId}}
+Authorization: Bearer {{employeeToken}}
+
+### Mobile tasks - update status
+POST {{host}}/api/mobile/tasks/{{mobileTaskId}}/status
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "status": "InProgress",
+  "note": "Đã bắt đầu xử lý công việc."
+}
+
+### Mobile tasks - add comment
+POST {{host}}/api/mobile/tasks/{{mobileTaskId}}/comments
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "content": "Tôi đã tiếp nhận công việc."
+}
+
+### Mobile tasks - comments
+GET {{host}}/api/mobile/tasks/{{mobileTaskId}}/comments
+Authorization: Bearer {{employeeToken}}
+
+### Mobile tasks - status history
+GET {{host}}/api/mobile/tasks/{{mobileTaskId}}/history
+Authorization: Bearer {{employeeToken}}
+
+### Mobile tasks - DepartmentManager scope
+GET {{host}}/api/mobile/tasks
+Authorization: Bearer {{departmentManagerToken}}
+
+### Mobile tasks - Director company scope
+GET {{host}}/api/mobile/tasks
 Authorization: Bearer {{directorToken}}

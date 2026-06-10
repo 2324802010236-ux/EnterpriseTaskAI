@@ -2,6 +2,7 @@ using EnterpriseTask.Application.Interfaces;
 using EnterpriseTask.Infrastructure.Data;
 using EnterpriseTask.Infrastructure.Email;
 using EnterpriseTask.Infrastructure.Identity;
+using EnterpriseTask.Infrastructure.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,8 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(
             configuration.GetSection(EmailSettings.SectionName));
         services.AddScoped<IEmailSender, SmtpEmailSender>();
+        services.AddScoped<INotificationRealtimeSender, NullNotificationRealtimeSender>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         return services;
     }

@@ -1,4 +1,5 @@
 using EnterpriseTask.Admin.ViewModels.Tasks;
+using EnterpriseTask.Application.Interfaces;
 using EnterpriseTask.Domain.Constants;
 using EnterpriseTask.Domain.Entities;
 using EnterpriseTask.Domain.Enums;
@@ -16,7 +17,8 @@ namespace EnterpriseTask.Admin.Controllers;
 [Route("company/tasks")]
 public class TasksController(
     AppDbContext context,
-    UserManager<ApplicationUser> userManager) : Controller
+    UserManager<ApplicationUser> userManager,
+    INotificationService notificationService) : Controller
 {
     private static readonly string[] AssignableRoles =
     [
@@ -179,7 +181,8 @@ public class TasksController(
         context.WorkTasks.Add(task);
         await context.SaveChangesAsync();
 
-        context.TaskAssignments.Add(BuildAssignment(task.Id, companyId, currentUser.Id, model, now));
+        var assignment = BuildAssignment(task.Id, companyId, currentUser.Id, model, now);
+        context.TaskAssignments.Add(assignment);
         context.TaskStatusHistories.Add(new TaskStatusHistory
         {
             CompanyId = companyId,
@@ -192,6 +195,14 @@ public class TasksController(
         });
         await context.SaveChangesAsync();
         await transaction.CommitAsync();
+
+        await notificationService.CreateTaskAssignedNotificationAsync(
+            companyId,
+            task.Id,
+            task.Title,
+            assignment.AssignedToUserId,
+            assignment.AssignedToDepartmentId,
+            currentUser.Id);
 
         TempData["SuccessMessage"] = "Đã tạo và phân công công việc.";
         return RedirectToAction(nameof(Details), new { id = task.Id });
@@ -283,6 +294,10 @@ public class TasksController(
             .OrderByDescending(item => item.CreatedAt)
             .ThenByDescending(item => item.Id)
             .FirstOrDefaultAsync();
+        var assignmentChanged = assignment is null
+            || assignment.TargetType != model.AssignmentTargetType
+            || assignment.AssignedToUserId != model.AssignedUserId
+            || assignment.AssignedToDepartmentId != model.DepartmentId;
         if (assignment is null)
         {
             context.TaskAssignments.Add(BuildAssignment(id, companyId, currentUser.Id, model, now));
@@ -293,6 +308,16 @@ public class TasksController(
         }
 
         await context.SaveChangesAsync();
+        if (assignmentChanged)
+        {
+            await notificationService.CreateTaskAssignedNotificationAsync(
+                companyId,
+                task.Id,
+                task.Title,
+                model.AssignedUserId,
+                model.DepartmentId,
+                currentUser.Id);
+        }
 
         TempData["SuccessMessage"] = "Đã cập nhật công việc.";
         return RedirectToAction(nameof(Details), new { id });
@@ -502,6 +527,12 @@ public class TasksController(
             ChangedAt = now
         });
         await context.SaveChangesAsync();
+        await notificationService.CreateTaskStatusChangedNotificationAsync(
+            task.CompanyId,
+            task.Id,
+            task.Title,
+            status,
+            changedByUserId);
     }
 
     private async Task PopulateOptionsAsync(TaskFormViewModel model, int companyId)

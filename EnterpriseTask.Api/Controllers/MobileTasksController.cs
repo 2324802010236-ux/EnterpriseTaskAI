@@ -1,6 +1,7 @@
 using EnterpriseTask.Api.DTOs.Mobile.Tasks;
 using EnterpriseTask.Api.Services;
 using EnterpriseTask.Application.Common;
+using EnterpriseTask.Application.Interfaces;
 using EnterpriseTask.Domain.Constants;
 using EnterpriseTask.Domain.Entities;
 using EnterpriseTask.Domain.Enums;
@@ -16,7 +17,8 @@ namespace EnterpriseTask.Api.Controllers;
 [Route("api/mobile/tasks")]
 public class MobileTasksController(
     AppDbContext context,
-    MobileWorkspaceAccessService accessService) : ControllerBase
+    MobileWorkspaceAccessService accessService,
+    INotificationService notificationService) : ControllerBase
 {
     [HttpGet("")]
     public async Task<ActionResult<ApiResponse<List<MobileTaskListItemDto>>>> Index(
@@ -193,6 +195,13 @@ public class MobileTasksController(
                 ChangedAt = now
             });
             await context.SaveChangesAsync(cancellationToken);
+            await notificationService.CreateTaskStatusChangedNotificationAsync(
+                workspace.Company.Id,
+                task.Id,
+                task.Title,
+                request.Status,
+                workspace.User.Id,
+                cancellationToken);
         }
 
         var response = await BuildDetailsAsync(workspace, id, cancellationToken);
@@ -221,9 +230,11 @@ public class MobileTasksController(
         }
 
         var workspace = access.Workspace!;
-        var canViewTask = await BuildTaskScope(workspace, asNoTracking: true)
-            .AnyAsync(item => item.Id == id, cancellationToken);
-        if (!canViewTask)
+        var taskTitle = await BuildTaskScope(workspace, asNoTracking: true)
+            .Where(item => item.Id == id)
+            .Select(item => item.Title)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (taskTitle is null)
         {
             return NotFound(ApiResponse<MobileTaskCommentDto>.Failed("Không tìm thấy công việc."));
         }
@@ -238,6 +249,13 @@ public class MobileTasksController(
         };
         context.TaskComments.Add(comment);
         await context.SaveChangesAsync(cancellationToken);
+        await notificationService.CreateTaskCommentedNotificationAsync(
+            workspace.Company.Id,
+            id,
+            taskTitle,
+            workspace.User.FullName,
+            workspace.User.Id,
+            cancellationToken);
 
         var response = new MobileTaskCommentDto
         {

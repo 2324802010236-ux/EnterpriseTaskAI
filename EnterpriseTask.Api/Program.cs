@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using EnterpriseTask.Api.Hubs;
 using EnterpriseTask.Api.Services;
 using EnterpriseTask.Application.Common;
 using EnterpriseTask.Application.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+const string LocalClientCorsPolicy = "LocalClientCors";
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -32,7 +34,25 @@ builder.Services
         };
     });
 builder.Services.AddOpenApi();
+builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(LocalClientCorsPolicy, policy =>
+    {
+        policy
+            .SetIsOriginAllowed(origin =>
+                Uri.TryCreate(origin, UriKind.Absolute, out var uri)
+                && (uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
+                    || uri.Host.Equals("127.0.0.1", StringComparison.OrdinalIgnoreCase)))
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddSingleton<NotificationRealtimeDeliveryTracker>();
+builder.Services.AddScoped<INotificationRealtimeSender, SignalRNotificationRealtimeSender>();
+builder.Services.AddHostedService<NotificationRealtimeDispatcher>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<JwtTokenService>();
@@ -70,6 +90,20 @@ builder.Services
             RoleClaimType = ClaimTypes.Role,
             ClockSkew = TimeSpan.Zero
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrWhiteSpace(accessToken)
+                    && context.HttpContext.Request.Path.StartsWithSegments("/hubs/notifications"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 builder.Services.AddAuthorization();
 
@@ -82,10 +116,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(LocalClientCorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 var summaries = new[]
 {

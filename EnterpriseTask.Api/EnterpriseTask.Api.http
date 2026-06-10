@@ -16,6 +16,7 @@
 @directorToken = paste-director-token-here
 @subscriptionPlanId = 1
 @mobileTaskId = 1
+@mobileNotificationId = 1
 
 ### Register company and CompanyAdmin
 POST {{host}}/api/auth/register-company
@@ -183,3 +184,26 @@ Authorization: Bearer {{departmentManagerToken}}
 ### Mobile tasks - Director company scope
 GET {{host}}/api/mobile/tasks
 Authorization: Bearer {{directorToken}}
+
+### Mobile notifications - list
+GET {{host}}/api/mobile/notifications?unreadOnly=true&page=1&pageSize=20
+Authorization: Bearer {{employeeToken}}
+
+### Mobile notifications - unread count
+GET {{host}}/api/mobile/notifications/unread-count
+Authorization: Bearer {{employeeToken}}
+
+### Mobile notifications - mark one as read
+POST {{host}}/api/mobile/notifications/{{mobileNotificationId}}/read
+Authorization: Bearer {{employeeToken}}
+
+### Mobile notifications - mark all as read
+POST {{host}}/api/mobile/notifications/read-all
+Authorization: Bearer {{employeeToken}}
+
+### SignalR notifications
+# Hub URL: {{host}}/hubs/notifications?access_token={{employeeToken}}
+# Subscribe to events:
+# - notification.created
+# - notification.unreadCountChanged
+# The hub only joins groups derived from the authenticated JWT/database workspace.

@@ -36,6 +36,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<MobileWorkspaceAccessService>();
 
 var jwtSection = builder.Configuration.GetSection(JwtSettings.SectionName);
 var jwtSettings = jwtSection.Get<JwtSettings>()

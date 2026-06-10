@@ -3,8 +3,17 @@
 @systemAdminPassword = {{$processEnv SYSTEM_ADMIN_PASSWORD}}
 @companyAdminEmail = companyadmin.authdemo@enterprisetask.local
 @companyAdminPassword = {{$processEnv COMPANY_ADMIN_PASSWORD}}
+@employeeEmail = employee@company.local
+@employeePassword = {{$processEnv EMPLOYEE_PASSWORD}}
+@departmentManagerEmail = manager@company.local
+@departmentManagerPassword = {{$processEnv DEPARTMENT_MANAGER_PASSWORD}}
+@directorEmail = director@company.local
+@directorPassword = {{$processEnv DIRECTOR_PASSWORD}}
 @systemAdminToken = paste-system-admin-token-here
 @companyAdminToken = paste-company-admin-token-here
+@employeeToken = paste-employee-token-here
+@departmentManagerToken = paste-department-manager-token-here
+@directorToken = paste-director-token-here
 @subscriptionPlanId = 1
 
 ### Register company and CompanyAdmin
@@ -46,6 +55,33 @@ Content-Type: application/json
 GET {{host}}/api/auth/me
 Authorization: Bearer {{companyAdminToken}}
 
+### Login Employee for mobile workspace
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{employeeEmail}}",
+  "password": "{{employeePassword}}"
+}
+
+### Login DepartmentManager for mobile workspace
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{departmentManagerEmail}}",
+  "password": "{{departmentManagerPassword}}"
+}
+
+### Login Director for mobile workspace
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{directorEmail}}",
+  "password": "{{directorPassword}}"
+}
+
 ### Change password
 POST {{host}}/api/auth/change-password
 Authorization: Bearer {{companyAdminToken}}
@@ -75,3 +111,31 @@ Content-Type: application/json
   "adminEmail": "admin@demoabc.com",
   "adminPhone": "0909111222"
 }
+
+### Mobile workspace - current employee
+GET {{host}}/api/mobile/me
+Authorization: Bearer {{employeeToken}}
+
+### Mobile workspace - company
+GET {{host}}/api/mobile/company
+Authorization: Bearer {{employeeToken}}
+
+### Mobile workspace - employee department
+GET {{host}}/api/mobile/my-department
+Authorization: Bearer {{employeeToken}}
+
+### Mobile workspace - employee features
+GET {{host}}/api/mobile/features
+Authorization: Bearer {{employeeToken}}
+
+### Mobile workspace - employee dashboard
+GET {{host}}/api/mobile/dashboard
+Authorization: Bearer {{employeeToken}}
+
+### Mobile workspace - DepartmentManager features
+GET {{host}}/api/mobile/features
+Authorization: Bearer {{departmentManagerToken}}
+
+### Mobile workspace - Director features
+GET {{host}}/api/mobile/features
+Authorization: Bearer {{directorToken}}

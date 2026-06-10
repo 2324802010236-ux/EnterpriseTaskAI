@@ -51,6 +51,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddSingleton<NotificationRealtimeDeliveryTracker>();
+builder.Services.AddScoped<IChatRealtimeSender, SignalRChatRealtimeSender>();
 builder.Services.AddScoped<INotificationRealtimeSender, SignalRNotificationRealtimeSender>();
 builder.Services.AddHostedService<NotificationRealtimeDispatcher>();
 builder.Services.AddHttpContextAccessor();
@@ -96,7 +97,8 @@ builder.Services
             {
                 var accessToken = context.Request.Query["access_token"];
                 if (!string.IsNullOrWhiteSpace(accessToken)
-                    && context.HttpContext.Request.Path.StartsWithSegments("/hubs/notifications"))
+                    && (context.HttpContext.Request.Path.StartsWithSegments("/hubs/notifications")
+                        || context.HttpContext.Request.Path.StartsWithSegments("/hubs/chat")))
                 {
                     context.Token = accessToken;
                 }
@@ -122,6 +124,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<ChatHub>("/hubs/chat");
 
 var summaries = new[]
 {

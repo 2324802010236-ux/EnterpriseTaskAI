@@ -1,4 +1,5 @@
 using EnterpriseTask.Application.Interfaces;
+using EnterpriseTask.Infrastructure.Chat;
 using EnterpriseTask.Infrastructure.Data;
 using EnterpriseTask.Infrastructure.Email;
 using EnterpriseTask.Infrastructure.Identity;
@@ -30,6 +31,8 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(
             configuration.GetSection(EmailSettings.SectionName));
         services.AddScoped<IEmailSender, SmtpEmailSender>();
+        services.AddScoped<IChatRealtimeSender, NullChatRealtimeSender>();
+        services.AddScoped<IChatService, ChatService>();
         services.AddScoped<INotificationRealtimeSender, NullNotificationRealtimeSender>();
         services.AddScoped<INotificationService, NotificationService>();
 

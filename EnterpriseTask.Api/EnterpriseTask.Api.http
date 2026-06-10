@@ -17,6 +17,8 @@
 @subscriptionPlanId = 1
 @mobileTaskId = 1
 @mobileNotificationId = 1
+@mobileChatRoomId = 1
+@mobileChatTargetUserId = paste-target-user-id-here
 
 ### Register company and CompanyAdmin
 POST {{host}}/api/auth/register-company
@@ -207,3 +209,39 @@ Authorization: Bearer {{employeeToken}}
 # - notification.created
 # - notification.unreadCountChanged
 # The hub only joins groups derived from the authenticated JWT/database workspace.
+
+### Mobile chat - rooms
+GET {{host}}/api/mobile/chat/rooms
+Authorization: Bearer {{employeeToken}}
+
+### Mobile chat - create or get department room
+POST {{host}}/api/mobile/chat/department-room
+Authorization: Bearer {{employeeToken}}
+
+### Mobile chat - create or get task room
+POST {{host}}/api/mobile/chat/task-room/{{mobileTaskId}}
+Authorization: Bearer {{employeeToken}}
+
+### Mobile chat - create or get direct room
+POST {{host}}/api/mobile/chat/direct-room/{{mobileChatTargetUserId}}
+Authorization: Bearer {{employeeToken}}
+
+### Mobile chat - messages
+GET {{host}}/api/mobile/chat/rooms/{{mobileChatRoomId}}/messages?page=1&pageSize=30
+Authorization: Bearer {{employeeToken}}
+
+### Mobile chat - send message
+POST {{host}}/api/mobile/chat/rooms/{{mobileChatRoomId}}/messages
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "content": "Tin nhắn thử nghiệm từ mobile."
+}
+
+### SignalR chat
+# Hub URL: {{host}}/hubs/chat?access_token={{employeeToken}}
+# Subscribe to events:
+# - chat.message.created
+# - chat.room.updated
+# The hub only joins rooms from the authenticated user's database memberships.

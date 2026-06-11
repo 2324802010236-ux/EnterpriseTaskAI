@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Auth.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <Grid Padding="24,40,24,32">
+            <VerticalStackLayout MaximumWidthRequest="520" Spacing="22" VerticalOptions="Center">
+                <Button
+                    Clicked="OnBackClicked"
+                    HorizontalOptions="Start"
+                    Style="{StaticResource CompactButtonStyle}"
+                    Text="← Quay lại" />
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource PageTitleStyle}" Text="Vào công ty" />
+                    <Label
+                        Style="{StaticResource PageSubtitleStyle}"
+                        Text="Đăng nhập bằng tài khoản WorkFlow AI được công ty cấp." />
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="18">
+                        <VerticalStackLayout Spacing="7">
+                            <Label Style="{StaticResource InputLabelStyle}" Text="Email" />
+                            <Border Style="{StaticResource InputBorderStyle}">
+                                <Entry
+                                    Keyboard="Email"
+                                    Placeholder="name@company.com"
+                                    ReturnType="Next"
+                                    Text="{Binding Email}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="7">
+                            <Label Style="{StaticResource InputLabelStyle}" Text="Mật khẩu" />
+                            <Border Style="{StaticResource InputBorderStyle}">
+                                <Entry
+                                    IsPassword="True"
+                                    Placeholder="Nhập mật khẩu"
+                                    ReturnType="Done"
+                                    Text="{Binding Password}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Label
+                            IsVisible="{Binding HasError}"
+                            Style="{StaticResource ErrorLabelStyle}"
+                            Text="{Binding ErrorMessage}" />
+
+                        <Grid>
+                            <Button
+                                Command="{Binding LoginCommand}"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Text="Đăng nhập" />
+                            <ActivityIndicator
+                                HorizontalOptions="End"
+                                IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                Margin="0,0,18,0"
+                                VerticalOptions="Center" />
+                        </Grid>
+
+                        <Label
+                            FontSize="12"
+                            HorizontalTextAlignment="Center"
+                            Text="Ứng dụng sẽ lưu phiên đăng nhập an toàn bằng SecureStorage."
+                            TextColor="{StaticResource TextMuted}" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

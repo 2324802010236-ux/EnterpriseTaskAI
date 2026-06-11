@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Dashboard.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,48,24,32" Spacing="24">
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Spacing="4">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="WORKFLOW AI"
+                        TextColor="{StaticResource Primary}" />
+                    <Label Style="{StaticResource PageTitleStyle}" Text="Chào mừng bạn quay lại" />
+                </VerticalStackLayout>
+                <Border
+                    Grid.Column="1"
+                    Padding="12,7"
+                    BackgroundColor="{StaticResource SuccessLight}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    VerticalOptions="Start">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="12"
+                        Text="ĐÃ ĐĂNG NHẬP"
+                        TextColor="{StaticResource Success}" />
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="14">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Text="Mobile workspace"
+                        TextColor="{StaticResource TextPrimary}" />
+                    <Label
+                        LineHeight="1.4"
+                        Text="Dashboard nền đã sẵn sàng. Bước tiếp theo có thể kết nối /api/mobile/me và /api/mobile/dashboard."
+                        TextColor="{StaticResource TextSecondary}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Border Style="{StaticResource MetricCardStyle}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label FontAttributes="Bold" FontSize="26" Text="0" TextColor="{StaticResource TextPrimary}" />
+                        <Label FontSize="13" Text="Công việc hôm nay" TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource MetricCardStyle}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label FontAttributes="Bold" FontSize="26" Text="0" TextColor="{StaticResource TextPrimary}" />
+                        <Label FontSize="13" Text="Thông báo mới" TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Button
+                Command="{Binding LogoutCommand}"
+                Style="{StaticResource SecondaryButtonStyle}"
+                Text="Đăng xuất" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

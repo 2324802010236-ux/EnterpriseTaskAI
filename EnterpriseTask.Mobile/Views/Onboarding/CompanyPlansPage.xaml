@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Onboarding.CompanyPlansPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,42,24,32" Spacing="22">
+            <Button
+                Clicked="OnBackClicked"
+                HorizontalOptions="Start"
+                Style="{StaticResource CompactButtonStyle}"
+                Text="← Quay lại" />
+
+            <VerticalStackLayout Spacing="8">
+                <Label Style="{StaticResource PageTitleStyle}" Text="Chọn gói cho công ty" />
+                <Label
+                    Style="{StaticResource PageSubtitleStyle}"
+                    Text="Nền màn hình mua gói đã sẵn sàng để kết nối API onboarding ở bước tiếp theo." />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="14">
+                    <Border
+                        Padding="12,7"
+                        BackgroundColor="{StaticResource PrimaryLight}"
+                        HorizontalOptions="Start"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 20">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="12"
+                            Text="COMING NEXT"
+                            TextColor="{StaticResource Primary}" />
+                    </Border>
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Text="Các gói dịch vụ WorkFlow AI"
+                        TextColor="{StaticResource TextPrimary}" />
+                    <Label
+                        LineHeight="1.4"
+                        Text="Trang này sẽ gọi GET /api/company-onboarding/subscription-plans và dẫn tới luồng đăng ký công ty."
+                        TextColor="{StaticResource TextSecondary}" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Onboarding.StartPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <Grid Padding="24,48,24,32" RowDefinitions="Auto,*">
+            <HorizontalStackLayout Spacing="10">
+                <Border
+                    Padding="10,6"
+                    BackgroundColor="{StaticResource Primary}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="W"
+                        TextColor="White" />
+                </Border>
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    Text="WorkFlow AI"
+                    TextColor="{StaticResource TextPrimary}"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <VerticalStackLayout
+                Grid.Row="1"
+                MaximumWidthRequest="520"
+                Spacing="22"
+                VerticalOptions="Center">
+                <Border
+                    Padding="12,7"
+                    BackgroundColor="{StaticResource PrimaryLight}"
+                    HorizontalOptions="Start"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="12"
+                        Text="NỀN TẢNG QUẢN TRỊ DOANH NGHIỆP"
+                        TextColor="{StaticResource Primary}" />
+                </Border>
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="38"
+                    LineHeight="1.08"
+                    Text="Công việc rõ ràng.&#10;Đội ngũ đồng bộ."
+                    TextColor="{StaticResource TextPrimary}" />
+
+                <Label
+                    FontSize="16"
+                    LineHeight="1.45"
+                    Text="Quản lý công việc doanh nghiệp trên thiết bị di động."
+                    TextColor="{StaticResource TextSecondary}" />
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="14">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="Bắt đầu với WorkFlow AI"
+                            TextColor="{StaticResource TextPrimary}" />
+                        <Button
+                            Command="{Binding BuyPlanCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Text="Mua gói cho công ty" />
+                        <Button
+                            Command="{Binding JoinCompanyCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Text="Vào công ty" />
+                        <Label
+                            FontSize="12"
+                            HorizontalTextAlignment="Center"
+                            Text="Đăng nhập bằng tài khoản do công ty của bạn cung cấp."
+                            TextColor="{StaticResource TextMuted}" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

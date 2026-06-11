@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Tasks.TaskDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Chi tiết công việc">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,32" Spacing="18">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label FontAttributes="Bold" FontSize="24" Text="{Binding Task.Title}" />
+                        <Border Grid.Column="1" Style="{StaticResource StatusBadgeStyle}">
+                            <Label FontAttributes="Bold" FontSize="11" Text="{Binding Task.Status}" TextColor="{StaticResource Primary}" />
+                        </Border>
+                    </Grid>
+                    <Label LineHeight="1.4" Text="{Binding Task.Description}" TextColor="{StaticResource TextSecondary}" />
+                    <Label Text="{Binding Task.Priority, StringFormat='Ưu tiên: {0}'}" />
+                    <Label Text="{Binding Task.DueDateText, StringFormat='Hạn xử lý: {0}'}" />
+                    <Label Text="{Binding Task.AssignedToText, StringFormat='Phân công: {0}'}" />
+                    <Label Text="{Binding Task.CreatedByName, StringFormat='Người tạo: {0}'}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Style="{StaticResource FormSectionTitleStyle}" Text="Cập nhật trạng thái" />
+                    <Border Style="{StaticResource InputBorderStyle}">
+                        <Picker ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedStatus}" Title="Chọn trạng thái" />
+                    </Border>
+                    <Border Style="{StaticResource InputBorderStyle}">
+                        <Entry Placeholder="Ghi chú trạng thái (không bắt buộc)" Text="{Binding StatusNote}" />
+                    </Border>
+                    <Button Command="{Binding UpdateStatusCommand}" Text="Cập nhật trạng thái" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Style="{StaticResource FormSectionTitleStyle}" Text="Bình luận" />
+                    <Border Style="{StaticResource InputBorderStyle}">
+                        <Editor AutoSize="TextChanges" MinimumHeightRequest="80" Placeholder="Nhập bình luận..." Text="{Binding CommentText}" />
+                    </Border>
+                    <Button Command="{Binding AddCommentCommand}" Style="{StaticResource SecondaryButtonStyle}" Text="Gửi bình luận" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Comments}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource SubtleCardStyle}">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label FontAttributes="Bold" Text="{Binding AuthorName}" />
+                                        <Label Text="{Binding Content}" TextColor="{StaticResource TextSecondary}" />
+                                        <Label FontSize="11" Text="{Binding CreatedAtText}" TextColor="{StaticResource TextMuted}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Style="{StaticResource FormSectionTitleStyle}" Text="Lịch sử trạng thái" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Histories}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource SubtleCardStyle}">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label FontAttributes="Bold" Text="{Binding NewStatus, StringFormat='Trạng thái: {0}'}" />
+                                        <Label Text="{Binding ChangedByName, StringFormat='Cập nhật bởi: {0}'}" TextColor="{StaticResource TextSecondary}" />
+                                        <Label Text="{Binding Note}" TextColor="{StaticResource TextSecondary}" />
+                                        <Label FontSize="11" Text="{Binding CreatedAtText}" TextColor="{StaticResource TextMuted}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

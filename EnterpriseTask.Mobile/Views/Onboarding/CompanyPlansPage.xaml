@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="EnterpriseTask.Mobile.Views.Onboarding.CompanyPlansPage"
+    x:Name="PlansPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="24,42,24,32" Spacing="22">
+    <Grid Padding="24,36,24,24" RowDefinitions="Auto,*" RowSpacing="20">
+        <VerticalStackLayout Spacing="14">
             <Button
                 Clicked="OnBackClicked"
                 HorizontalOptions="Start"
@@ -14,37 +15,127 @@
                 Text="← Quay lại" />
 
             <VerticalStackLayout Spacing="8">
-                <Label Style="{StaticResource PageTitleStyle}" Text="Chọn gói cho công ty" />
+                <Label Style="{StaticResource PageTitleStyle}" Text="Mua gói cho công ty" />
                 <Label
                     Style="{StaticResource PageSubtitleStyle}"
-                    Text="Nền màn hình mua gói đã sẵn sàng để kết nối API onboarding ở bước tiếp theo." />
+                    Text="Chọn gói phù hợp để bắt đầu sử dụng WorkFlow AI." />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="1">
+            <VerticalStackLayout
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsBusy}"
+                Spacing="12"
+                VerticalOptions="Center">
+                <ActivityIndicator
+                    Color="{StaticResource Primary}"
+                    IsRunning="{Binding IsBusy}" />
+                <Label
+                    Text="Đang tải các gói dịch vụ..."
+                    TextColor="{StaticResource TextSecondary}" />
             </VerticalStackLayout>
 
-            <Border Style="{StaticResource CardBorderStyle}">
+            <Border
+                IsVisible="{Binding HasError}"
+                Style="{StaticResource CardBorderStyle}"
+                VerticalOptions="Start">
                 <VerticalStackLayout Spacing="14">
-                    <Border
-                        Padding="12,7"
-                        BackgroundColor="{StaticResource PrimaryLight}"
-                        HorizontalOptions="Start"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 20">
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="12"
-                            Text="COMING NEXT"
-                            TextColor="{StaticResource Primary}" />
-                    </Border>
                     <Label
                         FontAttributes="Bold"
-                        FontSize="20"
-                        Text="Các gói dịch vụ WorkFlow AI"
+                        FontSize="18"
+                        Text="Không thể tải danh sách gói"
                         TextColor="{StaticResource TextPrimary}" />
                     <Label
-                        LineHeight="1.4"
-                        Text="Trang này sẽ gọi GET /api/company-onboarding/subscription-plans và dẫn tới luồng đăng ký công ty."
+                        Text="{Binding ErrorMessage}"
                         TextColor="{StaticResource TextSecondary}" />
+                    <Button
+                        Command="{Binding RetryCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Text="Thử lại" />
                 </VerticalStackLayout>
             </Border>
-        </VerticalStackLayout>
-    </ScrollView>
+
+            <CollectionView
+                IsVisible="{Binding HasPlans}"
+                ItemsSource="{Binding Plans}"
+                SelectionMode="None">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="16" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,4" Style="{StaticResource CardBorderStyle}">
+                            <VerticalStackLayout Spacing="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="22"
+                                            Text="{Binding Name}"
+                                            TextColor="{StaticResource TextPrimary}" />
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="12"
+                                            Text="{Binding Code}"
+                                            TextColor="{StaticResource Primary}" />
+                                    </VerticalStackLayout>
+                                    <Border
+                                        Grid.Column="1"
+                                        Padding="10,6"
+                                        BackgroundColor="{StaticResource PrimaryLight}"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 16">
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="12"
+                                            Text="{Binding DurationDays, StringFormat='{0} ngày'}"
+                                            TextColor="{StaticResource PrimaryDark}" />
+                                    </Border>
+                                </Grid>
+
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="28"
+                                    Text="{Binding PriceText}"
+                                    TextColor="{StaticResource TextPrimary}" />
+
+                                <Label
+                                    LineHeight="1.35"
+                                    Text="{Binding Description}"
+                                    TextColor="{StaticResource TextSecondary}" />
+
+                                <BoxView BackgroundColor="{StaticResource BorderColor}" HeightRequest="1" />
+
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="10">
+                                    <Label
+                                        Text="{Binding MaxEmployees, StringFormat='✓ Tối đa {0} nhân viên'}"
+                                        TextColor="{StaticResource TextSecondary}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding MaxDepartments, StringFormat='✓ Tối đa {0} phòng ban'}"
+                                        TextColor="{StaticResource TextSecondary}" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Text="{Binding AiText, StringFormat='✓ {0}'}"
+                                        TextColor="{StaticResource TextSecondary}" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Text="{Binding RealtimeChatText, StringFormat='✓ {0}'}"
+                                        TextColor="{StaticResource TextSecondary}" />
+                                </Grid>
+
+                                <Button
+                                    Command="{Binding Source={x:Reference PlansPage}, Path=BindingContext.SelectPlanCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Text="Chọn gói" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
 </ContentPage>

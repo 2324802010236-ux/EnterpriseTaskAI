@@ -15,6 +15,14 @@ public static class AppConstants
 
     public const string StartRoute = "start";
     public const string PlansRoute = "plans";
+    public const string CompanyRegisterRoute = "company-register";
+    public const string PurchaseResultRoute = "purchase-result";
     public const string LoginRoute = "login";
     public const string DashboardRoute = "dashboard";
+    public const string TasksRoute = "tasks";
+    public const string TaskDetailsRoute = "task-details";
+    public const string NotificationsRoute = "notifications";
+    public const string ChatRoute = "chat";
+    public const string ChatMessagesRoute = "chat-messages";
+    public const string ProfileRoute = "profile";
 }

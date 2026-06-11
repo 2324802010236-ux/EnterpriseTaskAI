@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Profile.ProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,28,20,32" Spacing="20">
+                <VerticalStackLayout Spacing="5">
+                    <Label Style="{StaticResource PageTitleStyle}" Text="Hồ sơ" />
+                    <Label Style="{StaticResource PageSubtitleStyle}" Text="Thông tin tài khoản trong workspace công ty." />
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="16">
+                        <Border
+                            Padding="18"
+                            BackgroundColor="{StaticResource PrimaryLight}"
+                            HorizontalOptions="Center"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 40">
+                            <Label FontAttributes="Bold" FontSize="28" Text="WF" TextColor="{StaticResource Primary}" />
+                        </Border>
+                        <Label FontAttributes="Bold" FontSize="24" HorizontalTextAlignment="Center" Text="{Binding CurrentUser.FullName}" />
+                        <Label HorizontalTextAlignment="Center" Text="{Binding CurrentUser.Role}" TextColor="{StaticResource Primary}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Email" />
+                        <Label Text="{Binding CurrentUser.Email}" />
+                        <BoxView BackgroundColor="{StaticResource BorderColor}" HeightRequest="1" />
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Công ty" />
+                        <Label Text="{Binding CurrentUser.CompanyName}" />
+                        <BoxView BackgroundColor="{StaticResource BorderColor}" HeightRequest="1" />
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Phòng ban" />
+                        <Label Text="{Binding CurrentUser.DepartmentName, TargetNullValue='Chưa gán phòng ban'}" />
+                        <BoxView BackgroundColor="{StaticResource BorderColor}" HeightRequest="1" />
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Chức vụ" />
+                        <Label Text="{Binding CurrentUser.Position, TargetNullValue='Chưa cập nhật'}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Command="{Binding LogoutCommand}" Style="{StaticResource SecondaryButtonStyle}" Text="Đăng xuất" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

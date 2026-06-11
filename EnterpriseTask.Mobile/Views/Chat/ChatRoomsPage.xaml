@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Chat.ChatRoomsPage"
+    x:Name="ChatRoomsRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <Grid Padding="20,28,20,20" RowDefinitions="Auto,*" RowSpacing="18">
+        <VerticalStackLayout Spacing="5">
+            <Label Style="{StaticResource PageTitleStyle}" Text="Chat nội bộ" />
+            <Label Style="{StaticResource PageSubtitleStyle}" Text="Trao đổi trong phòng ban và công việc." />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Rooms}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <Label Text="Chưa có phòng chat nào dành cho bạn." TextColor="{StaticResource TextSecondary}" />
+                    </Border>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12" Style="{StaticResource CardBorderStyle}">
+                            <VerticalStackLayout Spacing="9">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label FontAttributes="Bold" FontSize="18" Text="{Binding Name}" />
+                                    <Border Grid.Column="1" Style="{StaticResource StatusBadgeStyle}">
+                                        <Label FontSize="11" Text="{Binding Type}" TextColor="{StaticResource Primary}" />
+                                    </Border>
+                                </Grid>
+                                <Label LineBreakMode="TailTruncation" Text="{Binding LastMessageText}" TextColor="{StaticResource TextSecondary}" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label FontSize="11" Text="{Binding LastMessageAtText}" TextColor="{StaticResource TextMuted}" />
+                                    <Label Grid.Column="1" FontAttributes="Bold" Text="{Binding UnreadCount, StringFormat='{0} chưa đọc'}" TextColor="{StaticResource Primary}" />
+                                </Grid>
+                                <Button
+                                    Command="{Binding Source={x:Reference ChatRoomsRoot}, Path=BindingContext.OpenRoomCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Text="Mở phòng chat" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

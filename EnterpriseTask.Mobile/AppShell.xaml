@@ -6,5 +6,4 @@
     BackgroundColor="{StaticResource AppBackground}"
     FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
-    Shell.TabBarIsVisible="False"
     Title="WorkFlow AI" />

@@ -1,12 +1,12 @@
 using EnterpriseTask.Mobile.ViewModels;
 
-namespace EnterpriseTask.Mobile.Views.Dashboard;
+namespace EnterpriseTask.Mobile.Views.Chat;
 
-public partial class DashboardPage : ContentPage
+public partial class ChatRoomsPage : ContentPage
 {
-    private readonly DashboardViewModel _viewModel;
+    private readonly ChatRoomsViewModel _viewModel;
 
-    public DashboardPage(DashboardViewModel viewModel)
+    public ChatRoomsPage(ChatRoomsViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Chat.ChatMessagesPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="{Binding RoomName}">
+
+    <Grid Padding="16" RowDefinitions="*,Auto" RowSpacing="12">
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Messages}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label HorizontalTextAlignment="Center" Text="Chưa có tin nhắn." TextColor="{StaticResource TextSecondary}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,10" Style="{StaticResource SubtleCardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label FontAttributes="Bold" Text="{Binding SenderName}" TextColor="{StaticResource Primary}" />
+                                <Label Text="{Binding Content}" />
+                                <Label FontSize="11" Text="{Binding CreatedAtText}" TextColor="{StaticResource TextMuted}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <Border Style="{StaticResource InputBorderStyle}">
+                <Entry Placeholder="Nhập tin nhắn..." ReturnType="Send" Text="{Binding MessageText}" />
+            </Border>
+            <Button Grid.Column="1" Command="{Binding SendCommand}" Text="Gửi" />
+        </Grid>
+    </Grid>
+</ContentPage>

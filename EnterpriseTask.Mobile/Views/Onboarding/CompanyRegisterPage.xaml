@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Onboarding.CompanyRegisterPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,36,24,32" Spacing="20">
+            <Button
+                Clicked="OnBackClicked"
+                HorizontalOptions="Start"
+                Style="{StaticResource CompactButtonStyle}"
+                Text="← Chọn gói khác" />
+
+            <VerticalStackLayout Spacing="8">
+                <Label Style="{StaticResource PageTitleStyle}" Text="Đăng ký công ty" />
+                <Label
+                    Style="{StaticResource PageSubtitleStyle}"
+                    Text="Hoàn tất thông tin để kích hoạt tài khoản quản trị WorkFlow AI." />
+            </VerticalStackLayout>
+
+            <Border IsVisible="{Binding HasSelectedPlan}" Style="{StaticResource SelectedPlanBorderStyle}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="3">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="12"
+                            Text="GÓI ĐÃ CHỌN"
+                            TextColor="{StaticResource Primary}" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="20"
+                            Text="{Binding SelectedPlan.Name}"
+                            TextColor="{StaticResource TextPrimary}" />
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="{Binding SelectedPlan.PriceText}"
+                        TextColor="{StaticResource Primary}"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="18">
+                    <Label Style="{StaticResource FormSectionTitleStyle}" Text="Thông tin công ty" />
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Tên công ty *" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Placeholder="Công ty TNHH WorkFlow" Text="{Binding CompanyName}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="7">
+                            <Label Style="{StaticResource InputLabelStyle}" Text="Mã số thuế" />
+                            <Border Style="{StaticResource InputBorderStyle}">
+                                <Entry Placeholder="0312345678" Text="{Binding TaxCode}" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="7">
+                            <Label Style="{StaticResource InputLabelStyle}" Text="Số điện thoại" />
+                            <Border Style="{StaticResource InputBorderStyle}">
+                                <Entry Keyboard="Telephone" Placeholder="0909000000" Text="{Binding CompanyPhone}" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Email công ty *" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Keyboard="Email" Placeholder="contact@company.com" Text="{Binding CompanyEmail}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Địa chỉ" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Placeholder="Địa chỉ công ty" Text="{Binding CompanyAddress}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Lĩnh vực" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Placeholder="Công nghệ thông tin" Text="{Binding Industry}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="18">
+                    <Label Style="{StaticResource FormSectionTitleStyle}" Text="Người quản trị công ty" />
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Họ tên người quản trị *" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Placeholder="Nguyễn Văn Admin" Text="{Binding AdminFullName}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Email người quản trị *" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Keyboard="Email" Placeholder="admin@company.com" Text="{Binding AdminEmail}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="7">
+                        <Label Style="{StaticResource InputLabelStyle}" Text="Số điện thoại người quản trị" />
+                        <Border Style="{StaticResource InputBorderStyle}">
+                            <Entry Keyboard="Telephone" Placeholder="0909111222" Text="{Binding AdminPhone}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label
+                IsVisible="{Binding HasError}"
+                Style="{StaticResource ErrorLabelStyle}"
+                Text="{Binding ErrorMessage}" />
+
+            <Grid>
+                <Button
+                    Command="{Binding PurchaseCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Text="Mua gói và tạo tài khoản" />
+                <ActivityIndicator
+                    HorizontalOptions="End"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    Margin="0,0,18,0"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <Label
+                FontSize="12"
+                HorizontalTextAlignment="Center"
+                Text="Thanh toán đang được mô phỏng cho môi trường demo."
+                TextColor="{StaticResource TextMuted}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

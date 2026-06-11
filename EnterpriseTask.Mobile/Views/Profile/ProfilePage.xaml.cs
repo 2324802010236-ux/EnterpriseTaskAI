@@ -1,12 +1,12 @@
 using EnterpriseTask.Mobile.ViewModels;
 
-namespace EnterpriseTask.Mobile.Views.Dashboard;
+namespace EnterpriseTask.Mobile.Views.Profile;
 
-public partial class DashboardPage : ContentPage
+public partial class ProfilePage : ContentPage
 {
-    private readonly DashboardViewModel _viewModel;
+    private readonly ProfileViewModel _viewModel;
 
-    public DashboardPage(DashboardViewModel viewModel)
+    public ProfilePage(ProfileViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;

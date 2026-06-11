@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Onboarding.CompanyPurchaseResultPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <Grid Padding="24,42,24,32">
+            <VerticalStackLayout MaximumWidthRequest="560" Spacing="22" VerticalOptions="Center">
+                <Border
+                    Padding="18"
+                    BackgroundColor="{StaticResource SuccessLight}"
+                    HorizontalOptions="Center"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 32">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="30"
+                        Text="✓"
+                        TextColor="{StaticResource Success}" />
+                </Border>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource PageTitleStyle}"
+                        Text="Đăng ký thành công" />
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        LineHeight="1.4"
+                        Text="Hãy kiểm tra email để nhận thông tin tài khoản Web Admin."
+                        TextColor="{StaticResource TextSecondary}" />
+                </VerticalStackLayout>
+
+                <Border IsVisible="{Binding HasResult}" Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="16">
+                        <Label
+                            LineHeight="1.4"
+                            Text="{Binding Result.Message}"
+                            TextColor="{StaticResource TextSecondary}" />
+
+                        <BoxView BackgroundColor="{StaticResource BorderColor}" HeightRequest="1" />
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource InputLabelStyle}" Text="Email quản trị" />
+                            <Label
+                                FontAttributes="Bold"
+                                Text="{Binding Result.AdminEmail}"
+                                TextColor="{StaticResource TextPrimary}" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource InputLabelStyle}" Text="Web Admin" />
+                            <Label
+                                Text="{Binding Result.WebAdminUrl}"
+                                TextColor="{StaticResource Primary}" />
+                        </VerticalStackLayout>
+
+                        <Border
+                            IsVisible="{Binding HasTemporaryPassword}"
+                            Style="{StaticResource DemoPasswordBorderStyle}">
+                            <VerticalStackLayout Spacing="7">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="12"
+                                    Text="MẬT KHẨU TẠM - DEMO"
+                                    TextColor="{StaticResource Primary}" />
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Text="{Binding Result.TemporaryPassword}"
+                                    TextColor="{StaticResource TextPrimary}" />
+                                <Label
+                                    FontSize="12"
+                                    Text="Demo: mật khẩu tạm cũng đã được gửi qua email."
+                                    TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="12">
+                    <Button
+                        Command="{Binding GoHomeCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Text="Về màn hình chính" />
+                    <Button
+                        Command="{Binding GoToLoginCommand}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Text="Vào công ty" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EnterpriseTask.Mobile.Views.Notifications.NotificationsPage"
+    x:Name="NotificationsRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+
+    <Grid Padding="20,28,20,20" RowDefinitions="Auto,*" RowSpacing="18">
+        <Grid ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="5">
+                <Label Style="{StaticResource PageTitleStyle}" Text="Thông báo" />
+                <Label Text="{Binding UnreadCount, StringFormat='{0} thông báo chưa đọc'}" TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
+            <Button Grid.Column="1" Command="{Binding ReadAllCommand}" Style="{StaticResource CompactButtonStyle}" Text="Đọc tất cả" />
+        </Grid>
+
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Notifications}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <Label Text="Bạn chưa có thông báo nào." TextColor="{StaticResource TextSecondary}" />
+                    </Border>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12" Style="{StaticResource CardBorderStyle}">
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label FontAttributes="Bold" FontSize="17" Text="{Binding Title}" />
+                                    <Border Grid.Column="1" Style="{StaticResource StatusBadgeStyle}">
+                                        <Label FontSize="11" Text="{Binding ReadStateText}" TextColor="{StaticResource Primary}" />
+                                    </Border>
+                                </Grid>
+                                <Label Text="{Binding Message}" TextColor="{StaticResource TextSecondary}" />
+                                <Label FontSize="11" Text="{Binding CreatedAtText}" TextColor="{StaticResource TextMuted}" />
+                                <Button
+                                    Command="{Binding Source={x:Reference NotificationsRoot}, Path=BindingContext.MarkReadCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Style="{StaticResource CompactButtonStyle}"
+                                    Text="Đánh dấu đã đọc" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

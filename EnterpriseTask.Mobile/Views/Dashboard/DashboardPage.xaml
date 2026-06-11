@@ -5,65 +5,73 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="24,48,24,32" Spacing="24">
-            <Grid ColumnDefinitions="*,Auto">
-                <VerticalStackLayout Spacing="4">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="14"
-                        Text="WORKFLOW AI"
-                        TextColor="{StaticResource Primary}" />
-                    <Label Style="{StaticResource PageTitleStyle}" Text="Chào mừng bạn quay lại" />
-                </VerticalStackLayout>
-                <Border
-                    Grid.Column="1"
-                    Padding="12,7"
-                    BackgroundColor="{StaticResource SuccessLight}"
-                    StrokeThickness="0"
-                    StrokeShape="RoundRectangle 20"
-                    VerticalOptions="Start">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="12"
-                        Text="ĐÃ ĐĂNG NHẬP"
-                        TextColor="{StaticResource Success}" />
-                </Border>
-            </Grid>
-
-            <Border Style="{StaticResource CardBorderStyle}">
-                <VerticalStackLayout Spacing="14">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="20"
-                        Text="Mobile workspace"
-                        TextColor="{StaticResource TextPrimary}" />
-                    <Label
-                        LineHeight="1.4"
-                        Text="Dashboard nền đã sẵn sàng. Bước tiếp theo có thể kết nối /api/mobile/me và /api/mobile/dashboard."
-                        TextColor="{StaticResource TextSecondary}" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                <Border Style="{StaticResource MetricCardStyle}">
-                    <VerticalStackLayout Spacing="6">
-                        <Label FontAttributes="Bold" FontSize="26" Text="0" TextColor="{StaticResource TextPrimary}" />
-                        <Label FontSize="13" Text="Công việc hôm nay" TextColor="{StaticResource TextSecondary}" />
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="20,28,20,32" Spacing="20">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="4">
+                        <Label FontAttributes="Bold" FontSize="12" Text="WORKFLOW AI" TextColor="{StaticResource Primary}" />
+                        <Label FontAttributes="Bold" FontSize="28" Text="{Binding CurrentUser.FullName, StringFormat='Xin chào, {0}'}" />
+                        <Label Text="{Binding CurrentUser.CompanyName}" TextColor="{StaticResource TextSecondary}" />
                     </VerticalStackLayout>
-                </Border>
-                <Border Grid.Column="1" Style="{StaticResource MetricCardStyle}">
-                    <VerticalStackLayout Spacing="6">
-                        <Label FontAttributes="Bold" FontSize="26" Text="0" TextColor="{StaticResource TextPrimary}" />
-                        <Label FontSize="13" Text="Thông báo mới" TextColor="{StaticResource TextSecondary}" />
-                    </VerticalStackLayout>
-                </Border>
-            </Grid>
+                    <Border Grid.Column="1" Style="{StaticResource StatusBadgeStyle}">
+                        <Label FontAttributes="Bold" FontSize="11" Text="{Binding CurrentUser.Role}" TextColor="{StaticResource Primary}" />
+                    </Border>
+                </Grid>
 
-            <Button
-                Command="{Binding LogoutCommand}"
-                Style="{StaticResource SecondaryButtonStyle}"
-                Text="Đăng xuất" />
-        </VerticalStackLayout>
-    </ScrollView>
+                <Border Style="{StaticResource SelectedPlanBorderStyle}">
+                    <Label LineHeight="1.4" Text="{Binding Dashboard.WelcomeMessage}" TextColor="{StaticResource TextPrimary}" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+                    <Border Style="{StaticResource MetricCardStyle}">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource MetricValueStyle}" Text="{Binding Dashboard.MyTaskCount}" />
+                            <Label Style="{StaticResource MetricLabelStyle}" Text="Công việc của tôi" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource MetricCardStyle}">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource MetricValueStyle}" Text="{Binding Dashboard.InProgressTaskCount}" />
+                            <Label Style="{StaticResource MetricLabelStyle}" Text="Đang xử lý" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="1" Style="{StaticResource MetricCardStyle}">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource MetricValueStyle}" Text="{Binding Dashboard.DoneTaskCount}" />
+                            <Label Style="{StaticResource MetricLabelStyle}" Text="Hoàn thành" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource MetricCardStyle}">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource MetricValueStyle}" Text="{Binding Dashboard.OverdueTaskCount}" />
+                            <Label Style="{StaticResource MetricLabelStyle}" Text="Quá hạn" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="2" Style="{StaticResource MetricCardStyle}">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource MetricValueStyle}" Text="{Binding Dashboard.NotificationCount}" />
+                            <Label Style="{StaticResource MetricLabelStyle}" Text="Thông báo" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource MetricCardStyle}">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Style="{StaticResource MetricValueStyle}" Text="{Binding Dashboard.DepartmentMemberCount}" />
+                            <Label Style="{StaticResource MetricLabelStyle}" Text="Thành viên phòng ban" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <Label Style="{StaticResource FormSectionTitleStyle}" Text="Truy cập nhanh" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button Command="{Binding OpenTasksCommand}" Style="{StaticResource SecondaryButtonStyle}" Text="Công việc" />
+                    <Button Grid.Column="1" Command="{Binding OpenNotificationsCommand}" Style="{StaticResource SecondaryButtonStyle}" Text="Thông báo" />
+                    <Button Grid.Column="2" Command="{Binding OpenChatCommand}" Style="{StaticResource SecondaryButtonStyle}" Text="Chat" />
+                </Grid>
+
+                <Label IsVisible="{Binding HasError}" Style="{StaticResource ErrorLabelStyle}" Text="{Binding ErrorMessage}" />
+                <Button Command="{Binding LogoutCommand}" Style="{StaticResource CompactButtonStyle}" Text="Đăng xuất" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

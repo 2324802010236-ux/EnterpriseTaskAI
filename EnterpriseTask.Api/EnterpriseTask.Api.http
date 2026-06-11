@@ -19,6 +19,7 @@
 @mobileNotificationId = 1
 @mobileChatRoomId = 1
 @mobileChatTargetUserId = paste-target-user-id-here
+@aiTaskId = 1
 
 ### Register company and CompanyAdmin
 POST {{host}}/api/auth/register-company
@@ -245,3 +246,38 @@ Content-Type: application/json
 # - chat.message.created
 # - chat.room.updated
 # The hub only joins rooms from the authenticated user's database memberships.
+
+### Mobile AI - suggest assignment
+POST {{host}}/api/mobile/ai/tasks/suggest-assignment
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "title": "Khẩn: hoàn tất báo cáo tiến độ",
+  "description": "Tổng hợp tiến độ các phòng ban và gửi trước cuộc họp.",
+  "dueDate": "2026-06-12T09:00:00Z"
+}
+
+### Mobile AI - summarize task by taskId
+POST {{host}}/api/mobile/ai/tasks/summarize
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "taskId": {{aiTaskId}}
+}
+
+### Mobile AI - suggest priority
+POST {{host}}/api/mobile/ai/tasks/suggest-priority
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "title": "Khẩn: xử lý sự cố hệ thống",
+  "description": "Cần xử lý trước khi bắt đầu ngày làm việc.",
+  "dueDate": "2026-06-12T02:00:00Z"
+}
+
+### Mobile AI - evaluate task progress
+POST {{host}}/api/mobile/ai/tasks/{{aiTaskId}}/evaluate-progress
+Authorization: Bearer {{employeeToken}}

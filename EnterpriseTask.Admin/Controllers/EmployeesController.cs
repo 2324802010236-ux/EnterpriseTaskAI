@@ -20,7 +20,7 @@ namespace EnterpriseTask.Admin.Controllers;
 public class EmployeesController(
     AppDbContext context,
     UserManager<ApplicationUser> userManager,
-    IEmailSender emailSender,
+    IEmailDeliveryService emailDeliveryService,
     ILogger<EmployeesController> logger) : Controller
 {
     private static readonly string[] ManagedRoles =
@@ -471,7 +471,7 @@ public class EmployeesController(
     {
         try
         {
-            await emailSender.SendEmailAsync(to, subject, htmlBody);
+            await emailDeliveryService.SendEmailAsync(to, subject, htmlBody);
             return true;
         }
         catch (Exception exception)

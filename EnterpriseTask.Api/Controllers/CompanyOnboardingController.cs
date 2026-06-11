@@ -22,7 +22,7 @@ public class CompanyOnboardingController(
     AppDbContext context,
     UserManager<ApplicationUser> userManager,
     IConfiguration configuration,
-    IEmailSender emailSender,
+    IEmailDeliveryService emailDeliveryService,
     ILogger<CompanyOnboardingController> logger) : ControllerBase
 {
     [HttpGet("subscription-plans")]
@@ -217,7 +217,7 @@ public class CompanyOnboardingController(
     {
         try
         {
-            await emailSender.SendEmailAsync(
+            await emailDeliveryService.SendEmailAsync(
                 request.AdminEmail,
                 "Tài khoản quản trị WorkFlow AI của công ty bạn đã được kích hoạt",
                 CompanyOnboardingEmailTemplates.BuildCompanyAdminWelcomeEmail(
